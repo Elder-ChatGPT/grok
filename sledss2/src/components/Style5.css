@@ -1,0 +1,73 @@
+.container {
+  text-align: center;
+  margin: 20px;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color:#0E5580;
+}
+
+/* Flexbox layout for tables */
+.score-tables {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* Space between the tables */
+  flex-wrap: wrap;
+}
+
+.score-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #333;
+}
+
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.score-table th, .score-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.score-table th {
+  background-color: #f4f4f4;
+}
+
+.latest th {
+  background-color: #c8e6c9; /* Light green for latest scores */
+}
+
+.old th {
+  background-color: #ffdddd; /* Light red for old scores */
+}
+
+.button-container {
+  margin-top: 20px;
+}
+
+button {
+  background-color: #0E5580;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
