@@ -45,7 +45,7 @@ const Login = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://localhost:5009/chat', {
+      const res = await fetch('http://184.168.29.119:5009/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
