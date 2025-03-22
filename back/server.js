@@ -22,6 +22,7 @@ const session = driver.session();
 // User Registration Route
 app.post('/register', async (req, res) => {
   const { email, password, age, gender } = req.body;
+
   if (!email || !password || !age || !gender) {
     return res.status(400).json({ error: 'All fields are required' });
   }
@@ -80,6 +81,7 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Function to determine the meaning of a score based on the forum
 const getScoreMeaning = (forum, score) => {
@@ -330,5 +332,130 @@ app.post('/chat', async (req, res) => {
 });
 
 
+// Route to save the user's answers and calculate the overall loneliness score
+app.post('/social', async (req, res) => {
+  const { userId, answers } = req.body;
+
+  if (!userId || !answers) {
+      return res.status(400).json({ error: 'UserID and answers are required' });
+  }
+
+  try {
+      // Scale mapping (0-11 scale)
+      const scaleMap = {
+          'Never': 10,
+          'Seldom': 8,
+          'Sometimes': 6,
+          'Often': 4,
+          'VeryOften': 2,
+          'Always': 0,
+          '0': 11,
+          '1': 8,
+          '2': 4,
+          '3-4': 2,
+          '5-8': 1,
+          '9+': 0,
+          '< Monthly': 10,
+          'Monthly': 8,
+          'Few times/month': 6,
+          'Weekly': 6,
+          'Few times/week': 2,
+          'Daily': 0
+      };
+
+      // Flatten and convert answers
+      const scaledAnswers = answers.flat().map(answer => scaleMap[answer]);
+
+      // Calculate the average score and scale it between 0 and 11
+      const total = scaledAnswers.reduce((sum, val) => sum + val, 0);
+      const score = Math.round(total / scaledAnswers.length);
+
+      // Save answers and score to Neo4j
+      const result = await session.run(
+          `
+          MERGE (u:Person {userID: $userId})
+          MERGE (s:LonelinessScore {userID: $userId})
+          SET s.answers = $answers, s.overallScore = $score
+          RETURN s
+          `,
+          { userId, answers: JSON.stringify(answers), score }
+      );
+
+      res.status(201).json({ message: 'Answers saved successfully', score });
+  } catch (error) {
+      console.error('Error saving answers:', error);
+      res.status(500).json({ error: 'Failed to save answers' });
+  }
+});
+
+// Route to retrieve the user's social score
+app.get('/social-score/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    const result = await session.run(
+      `
+      MATCH (s:LonelinessScore {userID: $userId})
+      RETURN s.overallScore AS score
+      `,
+      { userId }
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: 'Social score not found' });
+    }
+
+    const score = result.records[0].get('score');
+    res.json({ userId, score });
+  } catch (error) {
+    console.error('Error retrieving social score:', error);
+    res.status(500).json({ error: 'Failed to retrieve social score' });
+  }
+});
+
+// Save BMI value to Neo4j
+
+app.post('/api/save-bmi', async (req, res) => {
+  try {
+    const { userID, bmi, category } = req.body;
+    
+    console.log("Received request:", { userID, bmi, category }); // Log received data
+
+    if (!userID || !bmi || !category) {
+      console.error("❌ Backend error: Missing required parameters", { userID, bmi, category });
+      return res.status(400).json({ message: "Missing required parameters" });
+    }
+
+    const session = driver.session();
+    const query = `
+      MATCH (p:Person {userID: $userID})
+      SET p.bmi = $bmi, p.category = $category
+      RETURN p.userID, p.bmi, p.category
+    `;
+
+    const result = await session.run(query, { userID, bmi, category });
+    session.close();
+
+    if (result.records.length === 0) {
+      console.error("❌ Backend error: User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("✅ BMI saved successfully!");
+    return res.status(200).json({ message: "BMI saved successfully!" });
+
+  } catch (error) {
+    console.error("❌ Backend error:", error);
+    return res.status(500).json({ message: "Server error. Please try again later." });
+  }
+});
+
+
+
 // Start server
 app.listen(5009, () => console.log('Server running on port 5009'));
+

@@ -1,110 +1,213 @@
 import React from "react";
-import PieChart from './PieChart';
-
-
+import { useNavigate } from "react-router-dom";
+import image from "./images/ruben9.png";
+import image1 from "./images/ruben10.png";
+import logo from "./images/cape1.png";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleEvaluationClick = () => {
+    navigate("/evaluations");
+  };
+
   return (
-<div>
-<div style={flexcontainer}>
-      <div style={flexcolumn}>
-        <h2><div><span style={{color:"Turquoise",fontSize:35}}>S.</span>
-        <span style={{fontSize:20}}></span>
-        <span style={{color:"Turquoise",fontSize:35}}>L.</span>
-        <span style={{fontSize:20}}></span>
-        <span style={{color:"Turquoise",fontSize:35}}>E.</span>
-        <span style={{fontSize:20}}></span>
-        <span style={{color:"Turquoise",fontSize:35}}>D.</span>
-        <span style={{fontSize:20}}></span>
-        <span style={{color:"Turquoise",fontSize:35}}>S.</span>
-        <span style={{fontSize:20}}></span>
-        <span style={{color:"Turquoise",fontSize:35}}>S</span>
-        <span style={{fontSize:20}}></span>
-        <span style={{color:"red",fontSize:35}}>*</span>
+    <div>
+      <div style={pageStyle}>
+        <div style={leftColumnStyle}>
+          <img src={image} alt="pic" style={squareImageStyle} />
+          <div style={textStyle}>
+            <p style={paragraphStyle}>
+              Personalized Services: The first step is to assess your current situation. We use several
+              standard evaluations to get a basic understanding of your personal needs and lifestyle habits.
+              It’s recommended you take all the S.L.E.D.S.S. Evaluations for a full picture of your lifestyle habits. However, you can also choose to take a few to start the process.
+            </p>
+          </div>
         </div>
-        
-        </h2>
-        <div><span style={{color:"red",fontSize:25}}>S</span>
-        <span style={{fontSize:15}}>ocialization</span>
-        </div><br></br><br></br>
-        <div><span style={{color:"red",fontSize:25}}>L</span>
-        <span style={{fontSize:15}}>earning</span>
-        </div><br></br><br></br>
-        <div><span style={{color:"red",fontSize:25}}>E</span>
-        <span style={{fontSize:15}}>xercise</span>
-        </div><br></br><br></br>
-        <div><span style={{color:"red",fontSize:25}}>D</span>
-        <span style={{fontSize:15}}>iet</span>
-        </div><br></br><br></br>
-        <div><span style={{color:"red",fontSize:25}}>S</span>
-        <span style={{fontSize:15}}>tress</span>
-        </div><br></br><br></br>
-        <div><span style={{color:"red",fontSize:25}}>S</span>
-        <span style={{fontSize:15}}>leep</span>
+
+        <div style={rightColumnStyle}>
+          <p style={paragraphStyle}>
+            The Kin-Keepers’ S.L.E.D.S.S. Process <br/>teaches you how to improve brain health by creating healthy habits in these six areas of life:
+          </p>
+          <img src={image1} alt="pic" style={circleImageStyle} />
+          <button style={evaluationButtonStyle} onClick={handleEvaluationClick}>
+            S.L.E.D.S.S. Evaluations
+          </button>
         </div>
-       
       </div>
-      <div style={flexcolumn}>
-        <h2></h2>
-        <p>Please click on the forum names in the pie to findout more about each forum of S.L.E.D.S.S</p>
-        <p><PieChart /></p>
+
+      <div style={bottomSectionStyle}>
+        <div style={researchStyle}>
+          <p style={paragraphStyle}>
+            Research shows that lifestyle factors like unhealthy diets, lack of exercise, stress, poor sleep, and being alone
+            can cause and worsen dementia, including Alzheimer’s. But there’s also good news from the research.
+          </p>
+          <h3 style={{ color: 'red' }}>Improving lifestyle habits can improve your cognitive health!</h3>
+          <p style={paragraphStyle}>
+            The healthy habits promoted by the Kin-Keepers’ S.L.E.D.S.S. Process follow recommendations from the National Institute of Health and prominent cognitive health researchers, including:
+          </p>
+          <ul style={paragraphStyle}>
+            <li><strong>Dr. Rudolph Tanzi</strong>, Neuroscientist from Harvard's McCance Center for Brain Health.</li>
+            <li><strong>Dr. Dean Ornish</strong>, President and founder of the Preventive Medicine Research Institute in Sausalito, California.</li>
+          </ul>
+        </div>
+
+        <div style={footerStyle}>
+          <div style={footerColumnStyle}>
+            <img src={logo} alt="Kin-Keepers Logo" style={logoStyle} />
+          </div>
+          <div style={footerColumnStyle}>
+            <ul>
+              <ul><a href="/" style={footerLinkStyle}>HOME</a></ul><br/>
+              <ul><a href="#" style={footerLinkStyle}>ABOUT</a></ul><br/>
+              <ul><a href="#" style={footerLinkStyle}>SIGN UP</a></ul>
+            </ul>
+          </div>
+
+          <div style={footerColumnStyle}>
+            <h4>Kin-Keepers Solutions</h4>
+            <ul>
+              <ul><a href="#" style={footerLinkStyle}>ElderCHAT</a></ul><br/>
+              <ul><a href="#" style={footerLinkStyle}>Family Circle</a></ul><br/>
+              <ul><a href="#" style={footerLinkStyle}>S.L.E.D.S.S.</a></ul>
+            </ul>
+          </div>
+          
+          <div style={footerColumnStyle}>
+            <h4>Connect with us</h4>
+            <div style={socialMediaContainer}>
+              <div style={socialButtonStyle}>
+                {/* Social Button */}
+              </div>
+              <div style={socialButtonStyle}>
+                {/* Social Button */}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div style={flexcolumn}>
-        <h2>What is S.L.E.D.S.S? </h2>
-        <p>S.L.E.D.S.S.
-        stands for Socialization, Learning, Exercise, Diet, Stress, and Sleep. 
-        Coined by Dr. Rudy Tanzi, a Professor of Neurology at Harvard University and Massachusetts General Hospital. 
-        Also, studied and published by Dr. Dean Ornish at UCSF.
-         Make healthy lifestyle choices, and then go back and retake a Cognitive Test to see how you are doing. 
-         Together with family and friends make healthy lifestyle choices, then go back and measure how your cognitive health has improved. 
-         You can also join support groups to learn from their selections.
-          Finally, you can avail yourself of Cognitive Behavioral Therapies (CBTs) to combat stress, anxiety, or depression. </p>
-      </div>  
-    </div>
     </div>
   );
 };
 
-const bodyStyle = {
-  backgroundColor: "#f5f5f5",
-  padding: "5px",
-  minHeight: "25vh",
-  display: "flex",
-  justifyContent: "centre",
-  alignItems: "centre",
+const pageStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  padding: '20px',
+  backgroundColor: 'white'
 };
 
-const containerStyle = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "20px",
-  padding: "20px",
+const leftColumnStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '20px'
 };
 
-const flexcontainer = {
-  backgroundColor: "white",
-  padding: "20px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
-}
+const rightColumnStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '20px'
+};
 
-const flexcolumn ={
-  flex:"1",
-  padding:"50px",
-  backgroundColor:"",
-  color:"",
-  borderradius:"20px",
-  boxshadow:"0 4px 6px rgba(0, 0, 0, 0.1)",
-  maxwidth:"30%",
+const squareImageStyle = {
+  width: '550px',
+  height: '250px',
+  borderRadius: '20px',
+  objectFit: 'cover'
+};
 
-}
+const textStyle = {
+  display: 'flex',
+  textAlign: 'center',
+  marginTop: '20px'
+};
 
+const paragraphStyle = {
+  color: '#02678E',
+  textAlign: 'left',
+  margin: '0 0 20px 0',
+  padding: '0',
+  lineHeight: '1.6'
+};
 
+const evaluationButtonStyle = {
+  marginTop: '20px',
+  padding: '10px 20px',
+  backgroundColor: '#83A322',
+  color: 'white',
+  border: 'none',
+  borderRadius: '5px',
+  fontSize: '16px',
+  cursor: 'pointer'
+};
 
+const circleImageStyle = {
+  width: '300px',
+  height: '300px',
+  borderRadius: '20px',
+  objectFit: 'cover'
+};
 
+const bottomSectionStyle = {
+  backgroundColor: '#f0f8e6',
+  padding: '20px'
+};
 
+const researchStyle = {
+  border: '2px solid #02678E',
+  padding: '20px',
+  backgroundColor: '#f0f8e6',
+  marginBottom: '30px',
+  borderRadius: '10px'
+};
 
+const footerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  backgroundColor: '#02678E',
+  color: 'white',
+  padding: '20px'
+};
 
+const footerColumnStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start'
+};
+
+const footerLinkStyle = {
+  color: 'white',
+  textDecoration: 'none'
+};
+
+const logoStyle = {
+  width: '100px',
+  marginBottom: '10px'
+};
+
+const socialMediaContainer = {
+  display: 'flex',
+  gap: '10px',
+  backgroundColor: '#FFFFE0',
+  padding: '10px',
+  borderRadius: '5px'
+};
+
+const socialButtonStyle = {
+  width: '40px',
+  height: '40px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: 'white',
+  borderRadius: '5px'
+};
 
 export default Home;
+

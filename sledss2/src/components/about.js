@@ -14,7 +14,7 @@ const About = () => {
       localStorage.setItem('token', response.data.token); // Store JWT token
       localStorage.setItem('userID', response.data.userID); // Store userID for score tracking
       alert('Login successful');
-      navigate('/about3'); // Redirect to score submission page
+      navigate('/evaluations'); // Redirect to score submission page
     } catch (error) {
       console.error('Login failed:', error);
       alert('Invalid email or password');

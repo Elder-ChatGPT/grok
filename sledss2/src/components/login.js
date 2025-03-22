@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import './Style6.css'; // Import the CSS file
+import React, { useState } from 'react';
+import './Style6.css';
 
 const forums = {
   Socialization: [
@@ -44,6 +44,7 @@ const Login = () => {
     if (!msg.trim()) return;
     setLoading(true);
     setError(null);
+    setResponse('');
     try {
       const res = await fetch('http://184.168.29.119:5009/chat', {
         method: 'POST',
@@ -67,12 +68,12 @@ const Login = () => {
   return (
     <div className="chat-wrapper">
       <header className="chat-header">
-        <h2>Get Health Recommendations.</h2>
-        <h3>NB: If you need personalized health advice, then login.</h3>
+        <h2>Health Recommendations</h2>
+        <h3>NB: For personalized advice, please log in.</h3>
       </header>
       <div className="chat-content">
         <aside className="forum-sidebar">
-          <h3>Click On the Predefined Questions And Get Health Recommendations</h3>
+          <h3>Predefined Questions</h3>
           {Object.entries(forums).map(([forum, questions]) => (
             <div key={forum} className="forum-group">
               <h4>{forum}</h4>
@@ -90,9 +91,11 @@ const Login = () => {
         </aside>
         <main className="chat-main">
           <div className="chat-conversation">
-            {response ? (
+            {loading ? (
+              <div className="generating-message">Generating response...</div>
+            ) : response ? (
               <div className="ai-response">
-                <strong>Recommendations</strong>
+                <strong>Recommendations:</strong>
                 <p>{response}</p>
               </div>
             ) : (
@@ -113,7 +116,7 @@ const Login = () => {
               onClick={() => sendMessage(message)}
               disabled={loading}
             >
-              {loading ? 'Generating...' : 'Send'}
+              Send
             </button>
           </div>
         </main>

@@ -1,0 +1,128 @@
+/* Socialtest.css */
+
+.socialtest-container {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 28px;
+  color: #333;
+}
+
+.category {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.question-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.question-container {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.question {
+  font-size: 16px;
+  color: #333;
+}
+
+.options-container {
+  display: flex;
+  gap: 15px;
+}
+
+.option-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.scale-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.custom-radio {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.custom-radio input[type="radio"] {
+  display: none;
+}
+
+.custom-radio .inner-circle {
+  width: 16px;
+  height: 16px;
+  border: 2px solid  #666;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+
+.custom-radio input[type="radio"]:checked + .inner-circle::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: #007bff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.navigation-buttons button {
+  background:  #0e5580;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.navigation-buttons button:hover {
+  background: #0e5580;
+}
+
+.navigation-buttons .prev-button {
+  background:  #0e5580;
+}
+
+.navigation-buttons .next-button {
+  background: #0e5580;
+}
+
+.navigation-buttons .submit-button {
+  background: green;
+}
+
+
+

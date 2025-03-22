@@ -24,6 +24,8 @@ const Page1 = () => {
         gender,
         yearOfBirth: Number(yearOfBirth)
       });
+
+   
       alert('Registration successful. Please login.');
       navigate('/about'); // Redirect to Login Page
     } catch (error) {
