@@ -46,15 +46,16 @@ app.post('/register', async (req, res) => {
 
 // User Login Route
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
   }
 
   try {
     // Find user in Neo4j
     const result = await session.run(
-      `MATCH (u:Person {email: $email}) RETURN u.userID AS userID, u.password AS hashedPassword`,
+      `MATCH (u:Person {email: $email}) RETURN u.userID AS userID`,
       { email }
     );
 
@@ -62,15 +63,7 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'User not found' });
     }
 
-    const user = result.records[0];
-    const userID = user.get('userID');
-    const hashedPassword = user.get('hashedPassword');
-
-    // Compare passwords
-    const match = await bcrypt.compare(password, hashedPassword);
-    if (!match) {
-      return res.status(401).json({ error: 'Invalid password' });
-    }
+    const userID = result.records[0].get('userID');
 
     // Generate JWT token
     const token = jwt.sign({ userID }, SECRET_KEY, { expiresIn: '1h' });
@@ -454,6 +447,188 @@ app.post('/api/save-bmi', async (req, res) => {
   }
 });
 
+
+
+// Helper function to calculate MNA score
+const calculateMnaScore = (answers) => {
+  let score = 0;
+
+  // Question 1: Food intake decline
+  if (answers["food-intake"] === "severe decrease in food intake") score += 0; // Bad
+  else if (answers["food-intake"] === "moderate decrease in food intake") score += 2; // Moderate
+  else if (answers["food-intake"] === "no decrease in food intake") score += 3; // Good
+
+  // Question 2: Weight loss
+  if (answers["weight-loss"] === "weight loss greater than 3 kg (6.6 lbs)") score += 0; // Bad
+  else if (answers["weight-loss"] === "weight loss between 1 and 3 kg (2.2 and 6.6 lbs)") score += 1; // Moderate
+  else if (answers["weight-loss"] === "does not know") score += 2; // Moderate (slightly worse than no loss)
+  else if (answers["weight-loss"] === "no weight loss") score += 3; // Good
+
+  // Question 3: Mobility
+  if (answers["mobility"] === "bed or chair bound") score += 0; // Bad
+  else if (answers["mobility"] === "able to get out of bed / chair but does not go out") score += 2; // Moderate
+  else if (answers["mobility"] === "goes out") score += 3; // Good
+
+  // Question 4: Stress or disease in the past 3 months
+  if (answers["stress"] === "yes") score += 1; // Moderate
+  else if (answers["stress"] === "no") score += 3; // Good
+
+  // Question 5: Neuropsychological problems
+  if (answers["neuro"] === "severe dementia or depression") score += 0; // Bad
+  else if (answers["neuro"] === "mild dementia") score += 2; // Moderate
+  else if (answers["neuro"] === "no psychological problems") score += 3; // Good
+
+  // Normalize the score into one of the ranges (0-7, 8-11, 12-14)
+  if (score <= 7) {
+    // Bad condition: score between 0 and 7
+    score = Math.max(score, 0);
+  } else if (score <= 11) {
+    // Moderate condition: score between 8 and 11
+    score = Math.max(score, 8);
+  } else {
+    // Good condition: score between 12 and 14
+    score = Math.min(score, 14);
+  }
+
+  return score;
+};
+
+
+// Endpoint to submit MNA test answers and store the score
+app.post("/api/mna-test", async (req, res) => {
+  const { userID, answers } = req.body;
+
+  if (!userID || !answers) {
+    return res.status(400).send({ error: "Invalid request" });
+  }
+
+  // Calculate the MNA score
+  const score = calculateMnaScore(answers);
+
+  try {
+    // Store the score in the Neo4j database
+    await session.run(
+      "MATCH (p:Person {userID: $userID}) SET p.mnaScore = $score RETURN p",
+      { userID, score }
+    );
+    
+    return res.status(200).send({ message: "Test submitted and score saved!" });
+  } catch (error) {
+    console.error("Error saving MNA score:", error);
+    return res.status(500).send({ error: "Failed to save score. Please try again." });
+  }
+});
+
+
+
+app.get("/api/mna-score", async (req, res) => {
+  const { userID } = req.query;
+
+  if (!userID) {
+    return res.status(400).json({ error: "UserID is required" });
+  }
+
+  try {
+    const result = await session.run(
+      "MATCH (p:Person {userID: $userID}) RETURN p.mnaScore AS mnaScore",
+      { userID }
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const mnaScore = result.records[0].get("mnaScore");
+
+    if (mnaScore === null) {
+      return res.status(404).json({ error: "MNA score not available" });
+    }
+
+    return res.status(200).json({ mnaScore });
+  } catch (error) {
+    console.error("Database Query Failed:", error);
+    return res.status(500).json({ error: "Database query failed. Check backend logs." });
+  }
+});
+
+// Function to calculate stress score
+
+function calculateStressScore(responses) {
+  const scaleMap = {
+    "Never": 0,
+    "Almost Never": 1,
+    "Sometimes": 2,
+    "Fairly Often": 3,
+    "Very Often": 4
+  };
+
+  const scores = Object.values(responses).map((answer) => scaleMap[answer] || 0);
+  const totalScore = scores.reduce((sum, val) => sum + val, 0);
+
+  return totalScore;
+}
+
+
+// API to receive stress responses and save to Neo4j
+app.post("/api/stress-scale", async (req, res) => {
+  const { userId, responses } = req.body;
+
+  if (!userId || !responses) {
+    return res.status(400).json({ error: "UserID and responses are required" });
+  }
+
+  try {
+    const avgScore = calculateStressScore(responses);
+
+    // Save data to Neo4j (without date)
+    await session.run(
+      `
+      MATCH (p:Person {userID: $userId})
+      MERGE (s:StressScore {userID: $userId})
+      SET s.answers = $responses, s.score = $avgScore
+      RETURN s
+      `,
+      { userId, responses: JSON.stringify(responses), avgScore }
+    );
+
+    res.status(201).json({ message: "Stress score saved successfully", avgScore });
+  } catch (error) {
+    console.error("Error saving stress score:", error);
+    res.status(500).json({ error: "Failed to save stress score" });
+  }
+});
+
+
+app.get("/api/stress-score/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: "UserID is required" });
+  }
+
+  try {
+    const result = await session.run(
+      `
+      MATCH (s:StressScore {userID: $userId})
+      RETURN s.score AS score, s.answers AS answers
+      `,
+      { userId }
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: "No stress score found for this user" });
+    }
+
+    const record = result.records[0];
+    const score = record.get("score");
+    const answers = JSON.parse(record.get("answers"));
+
+    res.status(200).json({ score, answers });
+  } catch (error) {
+    console.error("Error retrieving stress score:", error);
+    res.status(500).json({ error: "Failed to retrieve stress score" });
+  }
+});
 
 
 // Start server

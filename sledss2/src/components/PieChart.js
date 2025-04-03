@@ -5,32 +5,32 @@ const PieChart = () => {
   return (
     <div className="pie-chart">
       <div className="section-label socialization">
-      <a style={{color:"black"}} href="http://localhost:3000/socialization" target="_blank">
+      <a style={{color:"black"}} href="http://184.168.29.119:3000/socialization" target="_blank">
       Socialization 
       </a>
       </div>
       <div className="section-label learning">
-      <a style={{color:"black"}} href="http://localhost:3000/learning" target="_blank" >
+      <a style={{color:"black"}} href="http://http://184.168.29.119:3000/learning" target="_blank" >
       Learning 
       </a>
       </div>
       <div className="section-label exercise">
-      <a style={{color:"black"}} href="http://localhost:3000/exercise" target="_blank">
+      <a style={{color:"black"}} href="http://184.168.29.119:3000/exercise" target="_blank">
       Exercise 
       </a>
       </div>
       <div className="section-label diet">
-      <a style={{color:"black"}} href="http://localhost:3000/diet" target="_blank">
+      <a style={{color:"black"}} href="http://184.168.29.119:3000/diet" target="_blank">
       Diet 
       </a>
       </div>
       <div className="section-label stress">
-      <a style={{color:"black"}} href="http://localhost:3000/stress" target="_blank">
+      <a style={{color:"black"}} href="http://184.168.29.119:3000/stress" target="_blank">
       Stress 
       </a>
       </div>
       <div className="section-label sleep">
-      <a style={{color:"black"}} href="http://localhost:3000/sleep" target="_blank">
+      <a style={{color:"black"}} href="http://184.168.29.119:3000/sleep" target="_blank">
       Sleep
       </a>
       </div>

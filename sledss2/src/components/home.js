@@ -27,7 +27,7 @@ const Home = () => {
 
         <div style={rightColumnStyle}>
           <p style={paragraphStyle}>
-            The Kin-Keepers’ S.L.E.D.S.S. Process <br/>teaches you how to improve brain health by creating healthy habits in these six areas of life:
+            The Kin-Keepers’ S.L.E.D.S.S. Process <br />teaches you how to improve brain health by creating healthy habits in these six areas of life:
           </p>
           <img src={image1} alt="pic" style={circleImageStyle} />
           <button style={evaluationButtonStyle} onClick={handleEvaluationClick}>
@@ -42,13 +42,13 @@ const Home = () => {
             Research shows that lifestyle factors like unhealthy diets, lack of exercise, stress, poor sleep, and being alone
             can cause and worsen dementia, including Alzheimer’s. But there’s also good news from the research.
           </p>
-          <h3 style={{ color: 'red' }}>Improving lifestyle habits can improve your cognitive health!</h3>
+          <h3 style={{ color: 'red', fontSize: '20px' }}>Improving lifestyle habits can improve your cognitive health!</h3>
           <p style={paragraphStyle}>
             The healthy habits promoted by the Kin-Keepers’ S.L.E.D.S.S. Process follow recommendations from the National Institute of Health and prominent cognitive health researchers, including:
           </p>
           <ul style={paragraphStyle}>
-            <li><strong>Dr. Rudolph Tanzi</strong>, Neuroscientist from Harvard's McCance Center for Brain Health.</li>
-            <li><strong>Dr. Dean Ornish</strong>, President and founder of the Preventive Medicine Research Institute in Sausalito, California.</li>
+            <li style={{ fontSize: '20px' }}><strong>Dr. Rudolph Tanzi</strong>, Neuroscientist from Harvard's McCance Center for Brain Health.</li>
+            <li style={{ fontSize: '20px' }}><strong>Dr. Dean Ornish</strong>, President and founder of the Preventive Medicine Research Institute in Sausalito, California.</li>
           </ul>
         </div>
 
@@ -58,23 +58,23 @@ const Home = () => {
           </div>
           <div style={footerColumnStyle}>
             <ul>
-              <ul><a href="/" style={footerLinkStyle}>HOME</a></ul><br/>
-              <ul><a href="#" style={footerLinkStyle}>ABOUT</a></ul><br/>
-              <ul><a href="#" style={footerLinkStyle}>SIGN UP</a></ul>
+              <ul><a href="/" style={{ ...footerLinkStyle, fontSize: '20px' }}>HOME</a></ul><br />
+              <ul><a href="#" style={{ ...footerLinkStyle, fontSize: '20px' }}>ABOUT</a></ul><br />
+              <ul><a href="#" style={{ ...footerLinkStyle, fontSize: '20px' }}>SIGN UP</a></ul>
             </ul>
           </div>
 
           <div style={footerColumnStyle}>
-            <h4>Kin-Keepers Solutions</h4>
+            <h4 style={{ fontSize: '20px' }}>Kin-Keepers Solutions</h4>
             <ul>
-              <ul><a href="#" style={footerLinkStyle}>ElderCHAT</a></ul><br/>
-              <ul><a href="#" style={footerLinkStyle}>Family Circle</a></ul><br/>
-              <ul><a href="#" style={footerLinkStyle}>S.L.E.D.S.S.</a></ul>
+              <ul><a href="#" style={{ ...footerLinkStyle, fontSize: '20px' }}>ElderCHAT</a></ul><br />
+              <ul><a href="#" style={{ ...footerLinkStyle, fontSize: '20px' }}>Family Circle</a></ul><br />
+              <ul><a href="#" style={{ ...footerLinkStyle, fontSize: '20px' }}>S.L.E.D.S.S.</a></ul>
             </ul>
           </div>
-          
+
           <div style={footerColumnStyle}>
-            <h4>Connect with us</h4>
+            <h4 style={{ fontSize: '20px' }}>Connect with us</h4>
             <div style={socialMediaContainer}>
               <div style={socialButtonStyle}>
                 {/* Social Button */}
@@ -115,7 +115,7 @@ const rightColumnStyle = {
 };
 
 const squareImageStyle = {
-  width: '550px',
+  width: '650px',
   height: '250px',
   borderRadius: '20px',
   objectFit: 'cover'
@@ -132,7 +132,8 @@ const paragraphStyle = {
   textAlign: 'left',
   margin: '0 0 20px 0',
   padding: '0',
-  lineHeight: '1.6'
+  lineHeight: '1.6',
+  fontSize: '20px'
 };
 
 const evaluationButtonStyle = {
@@ -142,7 +143,7 @@ const evaluationButtonStyle = {
   color: 'white',
   border: 'none',
   borderRadius: '5px',
-  fontSize: '16px',
+  fontSize: '20px',
   cursor: 'pointer'
 };
 
@@ -183,7 +184,8 @@ const footerColumnStyle = {
 
 const footerLinkStyle = {
   color: 'white',
-  textDecoration: 'none'
+  textDecoration: 'none',
+  fontSize: '20px'
 };
 
 const logoStyle = {
@@ -210,4 +212,5 @@ const socialButtonStyle = {
 };
 
 export default Home;
+
 

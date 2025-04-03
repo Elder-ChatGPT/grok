@@ -24,6 +24,9 @@ import SocialAnswers from "./components/socialanswers";
 import Evaluations from "./components/evaluations";
 import BmiEvaluation from "./components/bmi";
 import MnaTest from "./components/nurtition";
+import MnaResult from "./components/mna";
+import StressScale from "./components/stressscale";
+import StressScore from "./components/stressscore";
 
 const App = () => {
   const [demoDropdown, setDemoDropdown] = useState(false);
@@ -80,7 +83,7 @@ const App = () => {
                     ...dropdownLinkStyle,
                     ...(activeLink === "personalized" ? activeDropdownLinkStyle : {}),
                   }}
-                  to="/about"
+                  to="/evaluations"
                   onClick={() => handleLinkClick("personalized")}
                   onMouseEnter={(e) => {
                     e.target.style.backgroundColor = "#0E5580";
@@ -122,10 +125,13 @@ const App = () => {
           <Route path="/diet" element={<Diet />} />
           <Route path="/stress" element={<Stress />} />
           <Route path="/sleep" element={<Sleep />} />
+          <Route path="/mna" element={<ProtectedRoute><MnaResult /></ProtectedRoute>} />
           <Route path="/bmi" element={<ProtectedRoute><BmiEvaluation /></ProtectedRoute>} />
           <Route path="/nurtition" element={<ProtectedRoute><MnaTest/></ProtectedRoute>} />
           <Route path="/socialtest" element={<ProtectedRoute><Socialtest /></ProtectedRoute>} />
           <Route path="/socialanswers" element={<ProtectedRoute><SocialAnswers /></ProtectedRoute>} />
+          <Route path="/stressscale" element={<ProtectedRoute><StressScale /></ProtectedRoute>} />
+          <Route path="/stressscore" element={<ProtectedRoute><StressScore/></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

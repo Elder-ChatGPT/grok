@@ -47,7 +47,7 @@ const styles = {
     backgroundColor: 'white'
   },
   title: {
-    fontSize: '3rem',
+    fontSize: '24px', // Increased font size here
     fontWeight: 'bold',
     color: '#B91C1C',
     marginBottom: '30px',
@@ -63,16 +63,15 @@ const styles = {
     paddingRight: '20px'
   },
   subtitle: {
-    fontSize: '1.5rem',
+    fontSize: '20px', // Increased font size here
     fontWeight: '600',
     marginBottom: '15px'
   },
   description: {
-    fontSize: '1.0rem',
+    fontSize: '20px', // Increased font size here
     color: '#4B5563',
     marginBottom: '20px',
     lineHeight: '1.6'
-    
   },
   button: {
     backgroundColor: '#B91C1C',
@@ -81,7 +80,7 @@ const styles = {
     borderRadius: '30px',
     cursor: 'pointer',
     textAlign: 'center',
-    fontWeight: '600',
+    fontWeight: '800',
     width: 'fit-content'
   },
   imageContainer: {
@@ -97,7 +96,3 @@ const styles = {
 };
 
 export default Socialization;
-
-
-
-

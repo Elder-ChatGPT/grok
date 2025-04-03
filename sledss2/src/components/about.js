@@ -5,28 +5,25 @@ import axios from 'axios';
 const About = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://184.168.29.119:5009/login', { email, password });
+      const response = await axios.post('http://184.168.29.119:5009/login', { email });
       localStorage.setItem('token', response.data.token); // Store JWT token
       localStorage.setItem('userID', response.data.userID); // Store userID for score tracking
       alert('Login successful');
       navigate('/evaluations'); // Redirect to score submission page
     } catch (error) {
       console.error('Login failed:', error);
-      alert('Invalid email or password');
+      alert('Invalid email');
     }
   };
-
-
 
   return (
     <div style={bodyStyle}>
       <form style={formStyle} onSubmit={handleLogin}>
-        <h1 style={headerStyle}>Login Form</h1>
+        <h1 style={headerStyle}>Login</h1>
 
         <div style={inputContainerStyle}>
           <label style={labelStyle}>Email:</label>
@@ -39,22 +36,9 @@ const About = () => {
           />
         </div>
 
-        <div style={inputContainerStyle}>
-          <label style={labelStyle}>Password:</label>
-          <input
-            style={inputStyle}
-            type="password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
         <button style={{ ...buttonStyle, marginLeft: '10px' }} type="submit">
           Login
         </button>
-
-        
 
         <p>
           Don't have an account?{' '}
@@ -122,4 +106,7 @@ const buttonStyle = {
   textAlign: 'center',
 };
 
+
+
 export default About;
+

@@ -22,11 +22,11 @@ const Evaluations = () => {
   }, []);
 
   const categories = [
-    { name: "Socialization", color: "#B90E3E", image: SocializationImg, route: "/socialization" },
+    { name: "Socialize", color: "#B90E3E", image: SocializationImg, route: "/socialization" },
     { name: "Learning", color: "#D38F5D", image: LearningImg, route: "/learning" },
     { name: "Exercise", color: "#E8C547", image: ExerciseImg, route: "/exercise" },
     { name: "Diet", color: "#2E8B57", image: DietImg, route: "/diet" },
-    { name: "Stress", color: "#38B6FF", image: StressImg, route: "/stresstest" },
+    { name: "Stress", color: "#38B6FF", image: StressImg, route: "/stress" },
     { name: "Sleep", color: "#A685E2", image: SleepImg, route: "/sleeptest" },
   ];
 
@@ -36,7 +36,6 @@ const Evaluations = () => {
       <div style={styles.grid}>
         {categories.map((category) => {
           const testInfo = completedTests[category.name]; // ✅ Get test completion data
-          const isCompleted = testInfo && testInfo.status === "Checkmate"; 
           return (
             <div key={category.name} style={styles.categoryContainer}>
               <img src={category.image} alt={category.name} style={styles.image} />
@@ -47,14 +46,11 @@ const Evaluations = () => {
                 >
                   {category.name}
                 </button>
-                {/* ✅ Show checkmark and timestamp if test is completed */}
-                {isCompleted && (
-                  <div style={styles.completedInfo}>
-                    <span style={styles.checkmark}>✔️</span>
-                    <span style={styles.timestamp}>
-                      Completed at: {testInfo.completedAt}
-                    </span>
-                  </div>
+                {/* ✅ Show only the completion date if test is completed */}
+                {testInfo && testInfo.completedAt && (
+                  <span style={styles.completedDate}>
+                    Completed on: {testInfo.completedAt.split(',')[0]}
+                  </span>
                 )}
               </div>
             </div>
@@ -74,7 +70,7 @@ const styles = {
     borderRadius: "10px",
   },
   title: {
-    fontSize: "28px",
+    fontSize: "20px", // Increased font size here
     fontWeight: "bold",
     color: "#333",
     marginBottom: "20px",
@@ -97,7 +93,7 @@ const styles = {
     transition: "transform 0.2s",
   },
   image: {
-    width: "80px",
+    width: "100px",
     height: "80px",
     objectFit: "cover",
     borderRadius: "8px",
@@ -115,25 +111,15 @@ const styles = {
     color: "white",
     border: "none",
     borderRadius: "20px",
-    fontSize: "14px",
+    fontSize: "20px", // Increased font size here
     fontWeight: "bold",
     cursor: "pointer",
     transition: "background-color 0.3s",
   },
-  completedInfo: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    fontSize: "12px",
+  completedDate: {
+    fontSize: "20px", // Increased font size here
     color: "#555",
-  },
-  checkmark: {
-    fontSize: "20px",
-    color: "green",
-  },
-  timestamp: {
-    fontSize: "15px",
-    color: "#777",
+    marginTop: "5px",
   },
 };
 
