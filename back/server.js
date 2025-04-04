@@ -108,7 +108,7 @@ const getScoreMeaning = (forum, score) => {
       break;
     case 'Sleep':
       meaning = score < 30 ? 'Poor sleep quality' 
-              : score < 60 ? 'Average sleep' 
+              : score < 60 ? 'Average sleep'  
               : 'Good sleep pattern';
       break;
     default:
@@ -447,8 +447,6 @@ app.post('/api/save-bmi', async (req, res) => {
   }
 });
 
-
-
 // Helper function to calculate MNA score
 const calculateMnaScore = (answers) => {
   let score = 0;
@@ -629,6 +627,9 @@ app.get("/api/stress-score/:userId", async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve stress score" });
   }
 });
+
+
+
 
 
 // Start server

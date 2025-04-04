@@ -130,8 +130,8 @@ const App = () => {
           <Route path="/nurtition" element={<ProtectedRoute><MnaTest/></ProtectedRoute>} />
           <Route path="/socialtest" element={<ProtectedRoute><Socialtest /></ProtectedRoute>} />
           <Route path="/socialanswers" element={<ProtectedRoute><SocialAnswers /></ProtectedRoute>} />
-          <Route path="/stressscale" element={<ProtectedRoute><StressScale /></ProtectedRoute>} />
-          <Route path="/stressscore" element={<ProtectedRoute><StressScore/></ProtectedRoute>} />
+          <Route path="/stressscale" element={<StressScale />} />
+          <Route path="/stressscore" element={<StressScore />} />
         </Routes>
       </div>
     </Router>

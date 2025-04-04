@@ -1,48 +1,52 @@
 .answers-container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    text-align: center;
-    color: #0e5580;
-  }
-  
-  .answers-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .answers-list li {
-    background: #fff;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .error-message {
-    color: red;
-    text-align: center;
-  }
-  
-  button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background: #0e5580;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    margin-top: 20px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background: #093a5e;
-  }
-  
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 20px; /* Increased font size */
+}
+
+h2 {
+  text-align: center;
+  color: #0e5580;
+  font-size: 24px; /* Slightly larger heading */
+}
+
+.answers-list {
+  list-style: none;
+  padding: 0;
+}
+
+.answers-list li {
+  background: #fff;
+  margin-bottom: 10px;
+  padding: 15px; /* Increased padding */
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 20px; /* Increased font size */
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  font-size: 20px; /* Increased font size */
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 15px; /* Increased padding */
+  background: #0e5580;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-size: 20px; /* Increased font size */
+}
+
+button:hover {
+  background: #093a5e;
+}
