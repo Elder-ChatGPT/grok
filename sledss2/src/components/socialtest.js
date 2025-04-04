@@ -76,6 +76,18 @@ const Socialtest = () => {
 
         if (response.ok) {
           alert('Answers submitted successfully!');
+          const storedCompletedTests = JSON.parse(localStorage.getItem('completedTests')) || {};
+          const completionDate = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit' 
+          });
+
+          storedCompletedTests[userId] = { 
+            ...(storedCompletedTests[userId] || {}), 
+            Socialize: { completedAt: completionDate }
+          };
+          localStorage.setItem('completedTests', JSON.stringify(storedCompletedTests));
           navigate('/socialanswers');
         } else {
           alert('Failed to submit answers. Please try again.');
