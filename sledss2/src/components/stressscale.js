@@ -7,6 +7,8 @@ const StressScale = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
+  const handleBack = onBack || (() => navigate(-1));
+
   const questionsPage1 = [
     "Been upset because of something that happened unexpectedly?",
     "Felt that you were unable to control the important things in your life?",
@@ -23,6 +25,7 @@ const StressScale = ({ onNext, onBack }) => {
   ];
 
   const options = ["Never", "Almost Never", "Sometimes", "Fairly Often", "Very Often"];
+  
 
   const handleChange = (questionIndex, value) => {
     setResponses({ ...responses, [`${currentPage}-${questionIndex}`]: value });
@@ -43,6 +46,14 @@ const StressScale = ({ onNext, onBack }) => {
       handleSubmit();
     }
   };
+
+  const handleBackPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    } else {
+      handleBack(); 
+    }
+  };  
 
   const handleSubmit = async () => {
     const userId = localStorage.getItem("userID"); // Get userID from local storage
@@ -118,7 +129,7 @@ const StressScale = ({ onNext, onBack }) => {
       </div>
 
       <div style={styles.buttonContainer}>
-        <button style={styles.backButton} onClick={onBack}>Back</button>
+      <button style={styles.backButton} onClick={handleBackPage}>Back</button>
         {!isNextDisabled(currentPage === 1 ? questionsPage1 : questionsPage2) && (
           <button
             style={styles.nextButton}

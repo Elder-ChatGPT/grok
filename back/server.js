@@ -630,6 +630,165 @@ app.get("/api/stress-score/:userId", async (req, res) => {
 
 
 
+app.post("/api/sleep-scale", async (req, res) => {
+  const { userId, responses } = req.body;
+
+  if (!userId || !responses) {
+    return res.status(400).json({ error: "Missing userId or responses" });
+  }
+
+  try {
+    const score = calculatePSQIScore(responses);
+
+    const session = driver.session();
+
+    await session.run(
+      `
+      MERGE (s:SleepScore {userID: $userId})
+      SET s.score = $score,
+          s.answers = $answers
+      `,
+      {
+        userId,
+        score,
+        answers: JSON.stringify(responses),
+      }
+    );
+
+    await session.close();
+
+    res.status(200).json({ message: "Score saved successfully", score });
+  } catch (error) {
+    console.error("Error saving PSQI score:", error);
+    res.status(500).json({ error: "Failed to save score" });
+  }
+});
+
+// Function to calculate the PSQI score from form responses
+function calculatePSQIScore(responses) {
+  // Helper to normalize responses
+  const getVal = (key) => {
+    const val = responses[key];
+    return isNaN(val) ? 0 : parseInt(val);
+  };
+
+  // Extract necessary data
+  const sleepLatency = getVal("1-1"); // time to fall asleep (minutes)
+  const sleepDuration = getVal("1-3"); // actual hours of sleep
+  const bedTime = getVal("1-0"); // placeholder - if needed
+  const wakeTime = getVal("1-2"); // placeholder - if needed
+
+  // Calculate efficiency if bedtime and wake time available
+  let timeInBed = 8; // placeholder fallback
+  if (bedTime && wakeTime) {
+    // You can calculate actual hours in bed here
+    timeInBed = 8; // For simplicity
+  }
+
+  const sleepEfficiency = (sleepDuration / timeInBed) * 100;
+
+  // Component Scores
+  const component1 = mapTextToScore(responses["5-1"]); // Subjective sleep quality
+  const component2 = sleepLatency <= 15 ? 0 : sleepLatency <= 30 ? 1 : sleepLatency <= 60 ? 2 : 3;
+  const component3 = sleepDuration >= 7 ? 0 : sleepDuration >= 6 ? 1 : sleepDuration >= 5 ? 2 : 3;
+  const component4 = sleepEfficiency >= 85 ? 0 : sleepEfficiency >= 75 ? 1 : sleepEfficiency >= 65 ? 2 : 3;
+
+  // Component 5: Disturbances (questions 2 and 3)
+  let disturbanceSum = 0;
+  for (let p of [2, 3]) {
+    const qList = Object.keys(responses).filter((key) => key.startsWith(`${p}-`));
+    for (let q of qList) {
+      disturbanceSum += mapTextToScore(responses[q]);
+    }
+  }
+  const component5 = disturbanceSum <= 9 ? 0 : disturbanceSum <= 18 ? 1 : disturbanceSum <= 27 ? 2 : 3;
+
+  // Component 6: Medication use
+  const component6 = mapTextToScore(responses["4-0"]);
+
+  // Component 7: Daytime dysfunction
+  const q1 = mapTextToScore(responses["4-1"]);
+  const q2 = mapTextToScore(responses["5-0"]);
+  const component7 = q1 + q2 <= 1 ? 0 : q1 + q2 <= 2 ? 1 : q1 + q2 <= 4 ? 2 : 3;
+
+  // Total PSQI Score
+  const totalScore = component1 + component2 + component3 + component4 + component5 + component6 + component7;
+
+  return totalScore;
+}
+
+// Converts option text to score (assumes 4 options from 0 to 3)
+function mapTextToScore(answer) {
+  const options = [
+    "Not during the past month",
+    "Less than once a week",
+    "Once or twice a week",
+    "Three or more times a week",
+    "No problem at all",
+    "Only a very slight problem",
+    "Somewhat of a problem",
+    "A very big problem",
+    "Very good",
+    "Fairly good",
+    "Fairly bad",
+    "Very bad",
+  ];
+
+  if (!answer) return 0;
+
+  const index = options.findIndex((opt) =>
+    answer.toLowerCase().includes(opt.toLowerCase())
+  );
+
+  return index % 4; // Maps to 0-3
+}
+
+
+app.get("/api/sleep-score/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: "UserID is required" });
+  }
+
+  try {
+    const result = await session.run(
+      `
+      MATCH (s:SleepScore {userID: $userId})
+      RETURN s.score AS score, s.answers AS answers
+      `,
+      { userId }
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: "No sleep score found for this user" });
+    }
+
+    const record = result.records[0];
+    const score = record.get("score");
+    const answers = JSON.parse(record.get("answers"));
+
+    res.status(200).json({ score, answers });
+  } catch (error) {
+    console.error("Error retrieving sleep score:", error);
+    res.status(500).json({ error: "Failed to retrieve sleep score" });
+  }
+});
+
+
+// Categorizes score into sleep quality
+function interpretSleepScore(score) {
+  if (score <= 5) return "Good sleep";
+  if (score <= 10) return "Moderate sleep";
+  if (score <= 15) return "Severe sleep";
+  return "Very severe sleep";
+}
+
+
+
+
+
+
 
 
 // Start server

@@ -27,7 +27,7 @@ const Evaluations = () => {
     { name: "Exercise", color: "#E8C547", image: ExerciseImg, route: "/exercise" },
     { name: "Diet", color: "#2E8B57", image: DietImg, route: "/diet" },
     { name: "Stress", color: "#38B6FF", image: StressImg, route: "/stress" },
-    { name: "Sleep", color: "#A685E2", image: SleepImg, route: "/sleeptest" },
+    { name: "Sleep", color: "#A685E2", image: SleepImg, route: "/sleep" },
   ];
 
   return (

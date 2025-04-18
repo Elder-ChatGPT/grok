@@ -27,6 +27,8 @@ import MnaTest from "./components/nurtition";
 import MnaResult from "./components/mna";
 import StressScale from "./components/stressscale";
 import StressScore from "./components/stressscore";
+import PITT from "./components/pitt";
+import PittScore from "./components/pittscore";
 
 const App = () => {
   const [demoDropdown, setDemoDropdown] = useState(false);
@@ -130,8 +132,10 @@ const App = () => {
           <Route path="/nurtition" element={<ProtectedRoute><MnaTest/></ProtectedRoute>} />
           <Route path="/socialtest" element={<ProtectedRoute><Socialtest /></ProtectedRoute>} />
           <Route path="/socialanswers" element={<ProtectedRoute><SocialAnswers /></ProtectedRoute>} />
-          <Route path="/stressscale" element={<StressScale />} />
-          <Route path="/stressscore" element={<StressScore />} />
+          <Route path="/stressscale" element={<ProtectedRoute><StressScale /></ProtectedRoute>} />
+          <Route path="/stressscore" element={<ProtectedRoute><StressScore /> </ProtectedRoute>} />
+          <Route path="/pitt" element={<ProtectedRoute><PITT /></ProtectedRoute>} />
+          <Route path="/pittscore" element={<ProtectedRoute><PittScore /> </ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

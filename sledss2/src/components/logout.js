@@ -5,38 +5,33 @@ import { LogOut } from 'lucide-react';
 const Logout = () => {
   const navigate = useNavigate();
 
+  const userId = localStorage.getItem('userID');
+  const isLoggedIn = !!userId; // or you can also check token
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userID');
-    localStorage.removeItem('authToken'); // If you're using tokens
-    localStorage.removeItem('userSession'); // Any other session data
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userSession');
 
-    // ✅ Clear only the logged-out user's completed tests
+    // ✅ Remove "Checkmate" status but keep timestamp
     const storedCompletedTests = JSON.parse(localStorage.getItem('completedTests')) || {};
-    const userId = localStorage.getItem('userID');
-
-    if (userId) {
-      // Retrieve the completed tests from localStorage
-      let storedCompletedTests = JSON.parse(localStorage.getItem('completedTests')) || {};
-
-      // ✅ If user has completed tests, remove "Checkmate" but keep timestamp
-      if (storedCompletedTests[userId]) {
-        Object.keys(storedCompletedTests[userId]).forEach((category) => {
-          if (storedCompletedTests[userId][category].status === "Checkmate") {
-            // Keep only the timestamp
-            storedCompletedTests[userId][category] = {
-              completedAt: storedCompletedTests[userId][category].completedAt
-            };
-          }
-        });
-
-        // Save the updated data back to localStorage
-        localStorage.setItem('completedTests', JSON.stringify(storedCompletedTests));
-      }
+    if (userId && storedCompletedTests[userId]) {
+      Object.keys(storedCompletedTests[userId]).forEach((category) => {
+        if (storedCompletedTests[userId][category].status === "Checkmate") {
+          storedCompletedTests[userId][category] = {
+            completedAt: storedCompletedTests[userId][category].completedAt
+          };
+        }
+      });
+      localStorage.setItem('completedTests', JSON.stringify(storedCompletedTests));
     }
+
     alert('Logout successful');
-    navigate('/'); // Redirect to login page
+    navigate('/');
   };
+
+  if (!isLoggedIn) return null; // 👈 Don't show the component if user is not logged in
 
   return (
     <div style={logoutContainer} onClick={handleLogout}>
