@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import image from './images/ep.png';
+import image from './images/exercise.png';
 
 const Exercise = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/socialtest');
+    navigate('/exerciseactivity');
   };
 
   return (
@@ -17,7 +17,12 @@ const Exercise = () => {
           <div style={styles.textSection}>
             <h2 style={styles.subtitle}>More information*</h2>
             <p style={styles.description}>
-              As social beings, our connections with others help us thrive. However, aging often leads to more isolation and loneliness, which can cause health issues like cognitive decline, depression, and heart disease. Thankfully, there are ways to combat these negative effects. Let’s start by assessing how connected you are to family and friends.
+            Physical activity supports health and quality of life
+ in older adults. The PASE tool measures activity
+ levels in those aged 65+ by assessing their weekly
+ participation in leisure, household, and work-related
+ tasks, helping professionals tailor interventions for
+ healthy aging.
             </p>
             <div style={styles.button} onClick={handleClick}>
               Start Your Evaluation
@@ -63,16 +68,15 @@ const styles = {
     paddingRight: '20px'
   },
   subtitle: {
-    fontSize: '1.5rem',
+    fontSize: '20px',
     fontWeight: '600',
     marginBottom: '15px'
   },
   description: {
-    fontSize: '1.0rem',
+    fontSize: '20px',
     color: '#4B5563',
     marginBottom: '20px',
     lineHeight: '1.6'
-    
   },
   button: {
     backgroundColor: '#E8C547',
@@ -81,7 +85,8 @@ const styles = {
     borderRadius: '30px',
     cursor: 'pointer',
     textAlign: 'center',
-    fontWeight: '600',
+    fontWeight: '800',
+    fontSize: '20px',
     width: 'fit-content'
   },
   imageContainer: {
@@ -91,13 +96,9 @@ const styles = {
     alignItems: 'center'
   },
   image: {
-    width: '350px',
-    height: '340px'
+    width: '320px',
+    height: '320px'
   }
 };
 
 export default Exercise;
-
-
-
-

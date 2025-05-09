@@ -29,6 +29,10 @@ import StressScale from "./components/stressscale";
 import StressScore from "./components/stressscore";
 import PITT from "./components/pitt";
 import PittScore from "./components/pittscore";
+import Activity from "./components/exerciseactivity";
+import Activityscore from "./components/exerciseresult";
+import Literacy from "./components/literacy";
+import Literacyscore from "./components/literacyscore";
 
 const App = () => {
   const [demoDropdown, setDemoDropdown] = useState(false);
@@ -50,13 +54,20 @@ const App = () => {
   return (
     <Router>
       <div style={menuStyle}>
-    <Link to="/">
+    <Link to="/home">
         <img src={logo} alt="Logo" style={logoStyle} />
     </Link>
-        <span style={welcomeStyle}>S.L.E.D.S.S.</span>
+    <Link to="/home" style={{ ...welcomeStyle, textDecoration: 'none', cursor: 'pointer' }}>
+  Healthy Lifestyle Choices
+</Link>
+
         <div style={menuLinksStyle}>
           <Logout />
+
+          <Link style={linkStyle} to="/home">Home</Link>
+
           <div style={{ position: "relative" }}>
+            
             <span style={linkStyle} onClick={toggleDropdown}>
               Services
             </span>
@@ -78,7 +89,7 @@ const App = () => {
                     e.target.style.color = "#1E3A5F";
                   }}
                 >
-                  Free Services
+                  Unregistered Services 
                 </Link>
                 <Link
                   style={{
@@ -101,15 +112,15 @@ const App = () => {
               </div>
             )}
           </div>
-          <Link style={linkStyle} to="/evaluations"></Link>
-          <Link style={linkStyle} to="/evaluation"></Link>
+          
+          
           <Link style={linkStyle} to="/evaluation"></Link>
         </div>
       </div>
 
       <div style={{ marginTop: "80px" }}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/evaluations" element={<ProtectedRoute><Evaluations /></ProtectedRoute>} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -136,6 +147,10 @@ const App = () => {
           <Route path="/stressscore" element={<ProtectedRoute><StressScore /> </ProtectedRoute>} />
           <Route path="/pitt" element={<ProtectedRoute><PITT /></ProtectedRoute>} />
           <Route path="/pittscore" element={<ProtectedRoute><PittScore /> </ProtectedRoute>} />
+          <Route path="/exerciseactivity" element={<ProtectedRoute><Activity /> </ProtectedRoute>} />
+          <Route path="/exerciseresult" element={<ProtectedRoute><Activityscore /> </ProtectedRoute>} />
+          <Route path="/literacy" element={<ProtectedRoute><Literacy /> </ProtectedRoute>} />
+          <Route path="/literacyscore" element={<ProtectedRoute><Literacyscore /> </ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

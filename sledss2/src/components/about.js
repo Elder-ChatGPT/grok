@@ -1,19 +1,30 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+
+// Custom hook to get query parameters (userId)
+const useUserId = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  return queryParams.get('userId'); // '12345'
+};
 
 const About = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const userId = useUserId(); // Call the custom hook here, at the top of the component
+  const [storedUserId, setStoredUserId] = useState(null); // State to store the userId
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (userId) {
+      setStoredUserId(userId); // Store userId in state
+      localStorage.setItem('userID', userId); // Store userId in localStorage
+    }
+  }, [userId]); // Dependency array ensures it runs only when userId changes
+
+  const handleLogin = async () => {
+    
     try {
-      const response = await axios.post('http://184.168.29.119:5009/login', { email });
-      localStorage.setItem('token', response.data.token); // Store JWT token
-      localStorage.setItem('userID', response.data.userID); // Store userID for score tracking
-      alert('Login successful');
-      navigate('/evaluations'); // Redirect to score submission page
+      navigate('/home'); // Navigate to evaluations page
     } catch (error) {
       console.error('Login failed:', error);
       alert('Invalid email');
@@ -22,31 +33,10 @@ const About = () => {
 
   return (
     <div style={bodyStyle}>
-      <form style={formStyle} onSubmit={handleLogin}>
-        <h1 style={headerStyle}>Login</h1>
-
-        <div style={inputContainerStyle}>
-          <label style={labelStyle}>Email:</label>
-          <input
-            style={inputStyle}
-            type="email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <button style={{ ...buttonStyle, marginLeft: '10px' }} type="submit">
-          Login
-        </button>
-
-        <p>
-          Don't have an account?{' '}
-          <span onClick={() => navigate('/register')} style={{ cursor: 'pointer', color: 'blue' }}>
-            Register here
-          </span>
-        </p>
-      </form>
+      
+      <button style={{ ...buttonStyle, marginLeft: '10px' }}  onClick={handleLogin}>
+        Login
+      </button>
     </div>
   );
 };
@@ -61,40 +51,6 @@ const bodyStyle = {
   alignItems: 'center',
 };
 
-const formStyle = {
-  width: '100%',
-  maxWidth: '500px',
-  backgroundColor: 'white',
-  padding: '20px',
-  borderRadius: '8px',
-  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-  boxSizing: 'border-box',
-};
-
-const headerStyle = {
-  textAlign: 'center',
-  color: '#0E5580',
-  marginBottom: '20px',
-};
-
-const inputContainerStyle = {
-  marginBottom: '15px',
-};
-
-const labelStyle = {
-  display: 'block',
-  marginBottom: '5px',
-  color: '#333',
-};
-
-const inputStyle = {
-  width: '100%',
-  padding: '8px',
-  border: '1px solid #ccc',
-  borderRadius: '4px',
-  boxSizing: 'border-box',
-};
-
 const buttonStyle = {
   backgroundColor: '#0E5580',
   color: 'white',
@@ -106,7 +62,4 @@ const buttonStyle = {
   textAlign: 'center',
 };
 
-
-
 export default About;
-

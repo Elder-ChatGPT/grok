@@ -13,7 +13,7 @@ const SocialAnswers = () => {
             if (!userId) return;
 
             try {
-                const response = await axios.get(`http://184.168.29.119:5009/social-score/${userId}`);
+                const response = await axios.get(`http://localhost:5003/social-score/${userId}`);
                 setScore(response.data.score);
             } catch (error) {
                 console.error('Error fetching loneliness score:', error);

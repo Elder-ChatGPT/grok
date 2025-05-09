@@ -76,310 +76,84 @@ app.post('/login', async (req, res) => {
 });
 
 
-// Function to determine the meaning of a score based on the forum
-const getScoreMeaning = (forum, score) => {
-  let meaning = '';
-
-  switch (forum) {
-    case 'Socialization':
-      meaning = score < 30 ? 'Poor social life' 
-              : score < 60 ? 'Average social life' 
-              : 'Great social life';
-      break;
-    case 'Learning':
-      meaning = score < 30 ? 'Limited learning engagement' 
-              : score < 60 ? 'Moderate learning activities' 
-              : 'Excellent learning habits';
-      break;
-    case 'Exercise':
-      meaning = score < 30 ? 'Low physical activity' 
-              : score < 60 ? 'Moderate exercise routine' 
-              : 'Excellent fitness level';
-      break;
-    case 'Diet':
-      meaning = score < 30 ? 'Unhealthy eating habits' 
-              : score < 60 ? 'Moderate diet balance' 
-              : 'Healthy and well-balanced diet';
-      break;
-    case 'Stress':
-      meaning = score < 30 ? 'Low stress levels' 
-              : score < 60 ? 'Moderate stress levels' 
-              : 'High stress, consider relaxation techniques';
-      break;
-    case 'Sleep':
-      meaning = score < 30 ? 'Poor sleep quality' 
-              : score < 60 ? 'Average sleep'  
-              : 'Good sleep pattern';
-      break;
-    default:
-      meaning = 'Unknown category';
-  }
-  return meaning;
-};
-
-// Score Submission Route
-app.post('/submit-scores', async (req, res) => {
-  const { userID, scores } = req.body;
-  if (!userID || !scores) {
-    return res.status(400).json({ error: 'UserID and scores are required' });
-  }
-
-  try {
-    // Validate all scores are within range
-    for (let forum in scores) {
-      if (scores[forum] < 10 || scores[forum] > 90) {
-        return res.status(400).json({ error: `${forum} score must be between 10 and 90` });
-      }
-    }
-
-    // Store scores with meanings in Neo4j
-    for (let forum in scores) {
-      const meaning = getScoreMeaning(forum, scores[forum]);
-      await session.run(
-        `MERGE (u:Person {userID: $userID})
-         MERGE (f:Forum {name: $forum})
-         CREATE (u)-[:SUBMITTED]->(s:Score {value: $score, meaning: $meaning})
-         CREATE (s)-[:BELONGS_TO]->(f)`,
-        { userID, forum, score: scores[forum], meaning }
-      );
-    }
-
-    res.json({ message: 'Scores submitted successfully' });
-  } catch (error) {
-    console.error('Score submission error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Route to fetch user scores
-app.get('/view-scores/:userID', async (req, res) => {
-  const { userID } = req.params;
-
-  try {
-    const result = await session.run(
-      `MATCH (u:Person {userID: $userID})-[:SUBMITTED]->(s:Score)-[:BELONGS_TO]->(f:Forum)
-       RETURN f.name AS forum, s.value AS value, s.meaning AS meaning`,
-      { userID }
-    );
-
-    const scores = result.records.map(record => ({
-      forum: record.get('forum'),
-      value: record.get('value'),
-      meaning: record.get('meaning')
-    }));
-
-    res.json(scores);
-  } catch (error) {
-    console.error('Error fetching scores:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Route to generate personalized advice
-app.post('/get-advice', async (req, res) => {
-  const { userID, criteria } = req.body;
-
-  if (!userID || !criteria) {
-    return res.status(400).json({ error: 'UserID and criteria are required' });
-  }
-
-  try {
-    // Fetch user details and scores
-    const userResult = await session.run(
-      `MATCH (u:Person {userID: $userID})-[:SUBMITTED]->(s:Score)-[:BELONGS_TO]->(f:Forum)
-       RETURN u.age AS age, u.gender AS gender, f.name AS forum, s.value AS score, s.meaning AS meaning`,
-      { userID }
-    );
-
-    if (userResult.records.length === 0) {
-      return res.status(404).json({ error: 'No user data found' });
-    }
-
-    // Extract logged-in user details
-    const userScores = {};
-    userResult.records.forEach(record => {
-      const forum = record.get('forum');
-      const score = record.get('score');
-      userScores[forum] = score;
-    });
-
-    if (criteria === "Anyone") {
-      // Generate a prompt using the logged-in user's data
-      let prompt = `I am a ${userResult.records[0].get('age')}-year-old ${userResult.records[0].get('gender')}. Here are my health scores and their meanings:\n`;
-      userResult.records.forEach(record => {
-        const forum = record.get('forum');
-        const score = record.get('score');
-        const meaning = record.get('meaning');
-        prompt += `- ${forum}: ${score}% (${meaning})\n`;
-      });
-
-      prompt += `\nBased on this information, provide personalized advice that can help improve my well-being.\n Please include my scores in the response, let the advice be very brief and well structured for easy understandability. 
-      Separate the advice of each forum on a new line. The advice should be as short as possible. And include the Anyone Criteria in the response.`;
-
-      // Call Cohere API
-      const response = await cohere.chat({
-        model: 'command-r-plus',
-        messages: [{ role: 'user', content: prompt }],
-      });
-
-      // Extract AI-generated advice
-      const advice = response.message.content.map(item => item.text).join(" ");
-
-      // Store the generated advice in Neo4j
-      await session.run(
-        `MATCH (u:Person {userID: $userID})
-         MERGE (a:Advice {text: $advice, criteria: 'Anyone', createdAt: timestamp()})
-         CREATE (u)-[:RECEIVED]->(a)`,
-        { userID, advice }
-      );
-
-      return res.json({ advice });
-
-    } else if (criteria === "LikeMe") {
-      // Find similar users based on score differences (±10% range in at least 3 forums)
-      const similarUsersResult = await session.run(
-        `MATCH (u1:Person {userID: $userID})-[:SUBMITTED]->(s1:Score)-[:BELONGS_TO]->(f:Forum),
-               (u2:Person)-[:SUBMITTED]->(s2:Score)-[:BELONGS_TO]->(f)
-         WHERE u1 <> u2 AND abs(s1.value - s2.value) <= 10
-         WITH u2, count(DISTINCT f) AS commonForums
-         WHERE commonForums >= 3
-         MATCH (u2)-[:RECEIVED]->(a:Advice {criteria: 'Anyone'})
-         RETURN a.text AS advice
-         LIMIT 3`,
-        { userID }
-      );
-
-      if (similarUsersResult.records.length > 0) {
-        // Compile advice from similar users
-        const adviceList = similarUsersResult.records.map(record => record.get('advice'));
-        const advice = adviceList.join("\n\n");
-
-        return res.json({ advice });
-      } else {
-        // No similar users found, generate new advice based on average scores
-        const avgScoresResult = await session.run(
-          `MATCH (s:Score)-[:BELONGS_TO]->(f:Forum)
-           RETURN f.name AS forum, avg(s.value) AS avgScore`
-        );
-
-        let avgPrompt = `There are no directly similar users, but here are average health scores based on the community:\n`;
-        avgScoresResult.records.forEach(record => {
-          const forum = record.get('forum');
-          const avgScore = record.get('avgScore').toFixed(2);
-          avgPrompt += `- ${forum}: ${avgScore}%\n`;
-        });
-
-        avgPrompt += `\nBased on these community trends, generate personalized advice for me as if I had these average scores. 
-        Let the response be brief, structured, and separated by forum. The advice should be practical and easy to follow. Include the criteria: 'LikeMe' in the response.Include which information you are using to generate the advice .`;
-
-        // Call Cohere API
-        const response = await cohere.chat({
-          model: 'command-r-plus',
-          messages: [{ role: 'user', content: avgPrompt }],
-        });
-
-        const advice = response.message.content.map(item => item.text).join(" ");
-
-        // Store the generated advice in Neo4j
-        await session.run(
-          `MATCH (u:Person {userID: $userID})
-           MERGE (a:Advice {text: $advice, criteria: 'LikeMe', createdAt: timestamp()})
-           CREATE (u)-[:RECEIVED]->(a)`,
-          { userID, advice }
-        );
-
-        return res.json({ advice });
-      }
-    }
-
-  } catch (error) {
-    console.error('Error generating advice:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
-
-// Chat endpoint that handles both predefined and custom questions
-app.post('/chat', async (req, res) => {
-  try {
-    const { message } = req.body;
-    if (!message || !message.trim()) {
-      return res.status(400).json({ error: 'Message cannot be empty' });
-    }
-    
-    // Call Cohere's chat API with the provided message (question)
-    const response = await cohere.chat({
-      model: 'command-r-plus',
-      messages: [{ role: 'user', content: message }],
-    });
-    
-    // Extract advice from the response
-    const contentText = response.message.content.map(item => item.text).join(" ");
-    res.json(contentText);
-    
-  } catch (error) {
-    console.error('Error communicating with Cohere API:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
 
 // Route to save the user's answers and calculate the overall loneliness score
 app.post('/social', async (req, res) => {
   const { userId, answers } = req.body;
 
   if (!userId || !answers) {
-      return res.status(400).json({ error: 'UserID and answers are required' });
+    return res.status(400).json({ error: 'UserID and answers are required' });
   }
 
   try {
-      // Scale mapping (0-11 scale)
-      const scaleMap = {
-          'Never': 10,
-          'Seldom': 8,
-          'Sometimes': 6,
-          'Often': 4,
-          'VeryOften': 2,
-          'Always': 0,
-          '0': 11,
-          '1': 8,
-          '2': 4,
-          '3-4': 2,
-          '5-8': 1,
-          '9+': 0,
-          '< Monthly': 10,
-          'Monthly': 8,
-          'Few times/month': 6,
-          'Weekly': 6,
-          'Few times/week': 2,
-          'Daily': 0
-      };
+    // Scale mapping (0-11 scale)
+    const scaleMap = {
+      'Never': 10,
+      'Seldom': 8,
+      'Sometimes': 6,
+      'Often': 4,
+      'VeryOften': 2,
+      'Always': 0,
+      '0': 11,
+      '1': 8,
+      '2': 4,
+      '3-4': 2,
+      '5-8': 1,
+      '9+': 0,
+      '< Monthly': 10,
+      'Monthly': 8,
+      'Few times/month': 6,
+      'Weekly': 6,
+      'Few times/week': 2,
+      'Daily': 0
+    };
 
-      // Flatten and convert answers
-      const scaledAnswers = answers.flat().map(answer => scaleMap[answer]);
+    // Meaning interpretation function
+    const getMeaning = (score) => {
+      if (score <= 3) return 'Fine';
+      if (score <= 8) return 'Normal';
+      return 'Abnormal';
+    };
 
-      // Calculate the average score and scale it between 0 and 11
-      const total = scaledAnswers.reduce((sum, val) => sum + val, 0);
-      const score = Math.round(total / scaledAnswers.length);
+    // Flatten and convert answers
+    const scaledAnswers = answers.flat().map(answer => scaleMap[answer]);
 
-      // Save answers and score to Neo4j
-      const result = await session.run(
-          `
-          MERGE (u:Person {userID: $userId})
-          MERGE (s:LonelinessScore {userID: $userId})
-          SET s.answers = $answers, s.overallScore = $score
-          RETURN s
-          `,
-          { userId, answers: JSON.stringify(answers), score }
-      );
+    // Calculate the average score
+    const total = scaledAnswers.reduce((sum, val) => sum + val, 0);
+    const score = Math.round(total / scaledAnswers.length);
 
-      res.status(201).json({ message: 'Answers saved successfully', score });
+    const meaning = getMeaning(score);
+
+    // Save to Neo4j
+    const result = await session.run(
+      `
+      MERGE (u:Person {userID: $userId})
+      MERGE (s:LonelinessScore {userID: $userId})
+      SET s.answers = $answers, s.overallScore = $score, s.meaning = $meaning
+      RETURN s
+      `,
+      {
+        userId,
+        answers: JSON.stringify(answers),
+        score,
+        meaning
+      }
+    );
+
+    res.status(201).json({
+      message: 'Answers and meaning saved successfully',
+      score,
+      meaning
+    });
+
   } catch (error) {
-      console.error('Error saving answers:', error);
-      res.status(500).json({ error: 'Failed to save answers' });
+    console.error('Error saving answers:', error);
+    res.status(500).json({ error: 'Failed to save answers' });
   }
 });
+
+
+
 
 // Route to retrieve the user's social score
 app.get('/social-score/:userId', async (req, res) => {
@@ -785,7 +559,496 @@ function interpretSleepScore(score) {
 }
 
 
+function calculateExerciseScore(responses) {
+  let totalPoints = 0;
+  let maxPoints = 0;
 
+  // Scoring map based on activity quality (lower is better)
+  const reverseScoring = {
+    "5-7 days": 0,
+    "3-4 days": 2,
+    "1-2 days": 5,
+    "Never": 10,
+    "Fairly Often": 0,
+    "Sometimes": 3,
+    "Almost": 6,
+    "Yes": 0,
+    "No": 10,
+  };
+
+  Object.entries(responses).forEach(([key, value]) => {
+    if (typeof value === "string" && reverseScoring.hasOwnProperty(value)) {
+      totalPoints += reverseScoring[value];
+      maxPoints += 10; // Worst case for each question
+    } else if (!isNaN(parseInt(value))) {
+      const num = parseInt(value);
+      totalPoints += num;
+      maxPoints += 10; // Assume numerical values cap at 10
+    }
+  });
+
+  // Normalize: Higher activity = lower totalPoints → invert
+  const score = 350 - Math.round((totalPoints / maxPoints) * 350);
+  return Math.max(0, Math.min(score, 350));
+}
+
+
+
+
+app.post("/api/exercise-scale", async (req, res) => {
+  const { userId, responses } = req.body;
+
+  if (!userId || !responses) {
+    return res.status(400).json({ error: "Missing userId or responses" });
+  }
+
+  try {
+    const score = calculateExerciseScore(responses);
+
+    const session = driver.session();
+
+    await session.run(
+      `
+      MERGE (e:ExerciseScore {userID: $userId})
+      SET e.score = $score,
+          e.answers = $answers
+      `,
+      {
+        userId,
+        score,
+        answers: JSON.stringify(responses),
+      }
+    );
+
+    await session.close();
+
+    res.status(200).json({ message: "Exercise score saved successfully", score });
+  } catch (error) {
+    console.error("Error saving exercise score:", error);
+    res.status(500).json({ error: "Failed to save exercise score" });
+  }
+});
+
+
+
+
+
+app.get("/api/exercise-score/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: "UserID is required" });
+  }
+
+  try {
+    const result = await session.run(
+      `
+      MATCH (e:ExerciseScore {userID: $userId})
+      RETURN e.score AS score, e.answers AS answers
+      `,
+      { userId }
+    );
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: "No sleep score found for this user" });
+    }
+
+    const record = result.records[0];
+    const score = record.get("score");
+    const answers = JSON.parse(record.get("answers"));
+
+    res.status(200).json({ score, answers });
+  } catch (error) {
+    console.error("Error retrieving exercise score:", error);
+    res.status(500).json({  error: "Failed to retrieve exercise score" });
+  }
+});
+
+
+
+
+
+
+
+function calculateLiteracyScore(answers) {
+  let score = 0;
+
+  const scoreMap = {
+    "food-intake": {
+      "Under 50": 1,
+      "50-69": 1,
+      "60-69": 1,
+      "70 and above": 1,
+    },
+    "weight-loss": {
+      "None": 0,
+      "Smart TV": 0,
+      "Smartphone": 1,
+      "Tablet": 1,
+      "Laptop/Desktop computer": 1,
+    },
+    "mobility": {
+      "Rarely/Never": 0,
+      "A few times a month": 0,
+      "A few times a week": 1,
+      "Daily": 1,
+    },
+    "stress": {
+      "Sending emails": 1,
+      "Browsing social media": 1,
+      "Online shopping": 1,
+      "Online banking": 1,
+      "Watching videos": 1,
+    },
+    "neuro": {
+      "No": 0,
+      "Not sure": 0,
+      "Yes": 1,
+    },
+    "skill": {
+      "Entertainment purposes": 1,
+      "Accessing information/news": 1,
+      "Stay connected with family and friends": 1,
+      "Improving job opportunities": 1,
+      "Pursuing hobbies/interests": 1,
+    },
+    "class": {
+      "No": 0,
+      "Yes": 1,
+    },
+  };
+
+  for (const key in answers) {
+    const value = answers[key];
+    score += scoreMap[key]?.[value] || 0;
+  }
+
+  return Math.min(score, 10); // Cap at 10
+}
+
+function getLiteracyClassification(score) {
+  if (score >= 8) return "Strong Cognitive Function";
+  if (score >= 6) return "Mild Cognitive Changes";
+  return "Potential Cognitive Concerns";
+}
+
+
+
+app.post("/api/learn-scale", async (req, res) => {
+  const { userID, answers } = req.body;
+
+  if (!userID || !answers) {
+    return res.status(400).json({ error: "Missing userID or answers" });
+  }
+
+  try {
+    const score = calculateLiteracyScore(answers);
+  
+
+    const session = driver.session();
+
+    await session.run(
+      `
+      MERGE (l:LiteracyScore {userID: $userID})
+      SET l.score = $score,
+          l.answers = $answers
+      `,
+      {
+        userID,
+        score,
+       
+        answers: JSON.stringify(answers),
+      }
+    );
+
+    await session.close();
+
+    res.status(200).json({ message: "Literacy score saved successfully", score });
+  } catch (error) {
+    console.error("Error saving literacy score:", error);
+    res.status(500).json({ error: "Failed to save literacy score" });
+  }
+});
+
+
+
+
+
+app.get("/api/learn-scale/:userID", async (req, res) => {
+  const { userID } = req.params;
+
+  if (!userID) {
+    return res.status(400).json({ error: "Missing userID" });
+  }
+
+  try {
+    const session = driver.session();
+
+    const result = await session.run(
+      `
+      MATCH (l:LiteracyScore {userID: $userID})
+      RETURN l.score AS score, l.answers AS answers
+      `,
+      { userID }
+    );
+
+    await session.close();
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: "No score found for this user" });
+    }
+
+    const score = result.records[0].get("score");
+    const answers = JSON.parse(result.records[0].get("answers"));
+    
+
+    res.status(200).json({
+      score,
+      answers,
+    });
+  } catch (error) {
+    console.error("Error retrieving literacy score:", error);
+    res.status(500).json({ error: "Failed to retrieve literacy score" });
+  }
+});
+
+
+
+app.post('/get-advice', async (req, res) => {
+  const { userID, criteria } = req.body;
+
+  if (!userID || !criteria) {
+    return res.status(400).json({ error: 'UserID and criteria are required' });
+  }
+
+  try {
+    const scoreQueries = [
+      { forum: 'Socialization', query: `MATCH (s:LonelinessScore {userID: $userID}) RETURN s.overallScore AS score,s.meaning AS meaning` },
+      { forum: 'Diet', query: `MATCH (p:Person {userID: $userID}) RETURN p.mnaScore AS score` },
+      { forum: 'Stress', query: `MATCH (s:StressScore {userID: $userID}) RETURN s.score AS score` },
+      { forum: 'Sleep', query: `MATCH (s:SleepScore {userID: $userID}) RETURN s.score AS score` },
+      { forum: 'Exercise', query: `MATCH (e:ExerciseScore {userID: $userID}) RETURN e.score AS score` },
+      { forum: 'Learning', query: `MATCH (l:LiteracyScore {userID: $userID}) RETURN l.score AS score` }
+    ];
+
+    const userScores = {};
+    for (const { forum, query } of scoreQueries) {
+      const result = await session.run(query, { userID });
+      if (result.records.length > 0 && result.records[0].get("score") != null) {
+        userScores[forum] = result.records[0].get("score");
+      }
+    }
+
+    if (Object.keys(userScores).length === 0) {
+      return res.status(404).json({ error: 'No forum scores found for this user' });
+    }
+
+    const userInfo = await session.run(
+      `MATCH (u:Person {userID: $userID}) RETURN u.age AS age, u.gender AS gender`,
+      { userID }
+    );
+
+    if (userInfo.records.length === 0) {
+      return res.status(404).json({ error: 'User info not found' });
+    }
+
+    const age = userInfo.records[0].get('age');
+    const gender = userInfo.records[0].get('gender');
+
+    // Filter prompt based only on existing scores
+    let prompt = `I am a ${age}-year-old ${gender}. Here are my completed health forum scores:\n`;
+    for (const forum in userScores) {
+      prompt += `- ${forum}: ${userScores[forum]}%\n`;
+    }
+
+    if (criteria === 'Anyone') {
+      prompt += `\nPlease give personalized, short, and structured advice per forum. Each forums advice should be on a new line. Use the 'Anyone' criteria in your guidance.Begin with score and its meaning Here is the meaning and scale of the different forum tests .
+
+For Socialization, Not Lonely: 0-3
+
+ Moderately Lonely: 4-8
+
+ Severely Lonely: 9-10
+
+ Very Severely Lonely: 11. 
+
+ For Diet , the scale is  Normal Nutrition: 12to14
+
+At Risk: 8-11
+
+ Malnourished: 0-7 . 
+
+ The stress scale is  Low Stress: 0–13
+
+ Moderate Stress: 14-26
+
+ High Stress: 27-40 .
+
+  The sleep scale is  Good Sleep: 0–5
+
+ Moderate Sleep: 6-10
+
+ Severe Sleep: 11-15
+
+Very Severe Sleep: 16-21 . 
+
+The exercise scale is  Very Low Activity: 0–50
+
+ Low to Moderate Activity: 51–150
+
+ Moderate to Active: 151–250
+
+Highly Active: 251–350. 
+
+The learning scale is  Strong Cognitive Function: 8–10
+
+ Mild Cognitive Changes: 6–7
+
+ Potential Cognitive Concerns: 0–5 . Use the given scales to and meanings to  understand and give the users score a meaning.Remove the percentages from the display.`;
+
+      const response = await cohere.chat({
+        model: 'command-r-plus',
+        messages: [{ role: 'user', content: prompt }]
+      });
+
+      const advice = response.message.content.map(item => item.text).join(" ");
+
+      await session.run(
+        `MATCH (u:Person {userID: $userID})
+         MERGE (a:Advice {text: $advice, criteria: 'Anyone', createdAt: timestamp()})
+         CREATE (u)-[:RECEIVED]->(a)`,
+        { userID, advice }
+      );
+
+      return res.json({ advice });
+    }
+
+  
+   
+    // ---- LIKE ME ----
+    if (criteria === 'LikeMe') {
+      const othersResult = await session.run(`
+        MATCH (other:Person)-[:RECEIVED]->(a:Advice {criteria: 'Anyone'})
+        OPTIONAL MATCH (ls:LonelinessScore {userID: other.userID})
+        OPTIONAL MATCH (ss:StressScore {userID: other.userID})
+        OPTIONAL MATCH (sl:SleepScore {userID: other.userID})
+        OPTIONAL MATCH (es:ExerciseScore {userID: other.userID})
+        OPTIONAL MATCH (ls2:LiteracyScore {userID: other.userID})
+        RETURN 
+          other.userID AS otherID, 
+          a.text AS advice,
+          ls.overallScore AS Socialization,
+          ss.score AS Stress,
+          sl.score AS Sleep,
+          es.score AS Exercise,
+          ls2.score AS Learning,
+          other.mnaScore AS Diet
+      `);
+    
+      const otherUsers = othersResult.records.map(r => ({
+        id: r.get('otherID'),
+        advice: r.get('advice'),
+        scores: {
+          Socialization: r.get('Socialization'),
+          Stress: r.get('Stress'),
+          Sleep: r.get('Sleep'),
+          Exercise: r.get('Exercise'),
+          Learning: r.get('Learning'),
+          Diet: r.get('Diet')
+        }
+      })).filter(u => u.advice);
+    
+      // Identify which forums the user attempted
+      const attemptedForums = Object.entries(userScores)
+        .filter(([_, value]) => value !== null && value !== undefined)
+        .map(([key]) => key);
+    
+      const scoredMatches = [];
+    
+      for (const other of otherUsers) {
+        const sharedForums = attemptedForums.filter(f => other.scores[f] !== null && other.scores[f] !== undefined);
+        if (sharedForums.length === 0) continue;
+    
+        const distance = sharedForums.reduce((acc, f) => {
+          return acc + Math.pow(userScores[f] - other.scores[f], 2);
+        }, 0);
+    
+        scoredMatches.push({ distance, sharedForums, ...other });
+      }
+    
+      const topMatches = scoredMatches.sort((a, b) => a.distance - b.distance).slice(0, 3);
+    
+      if (topMatches.length >= 1) {
+        let prompt = `Based on the advice given to users with similar scores in the following forums:\n`;
+    
+        topMatches.forEach((match, i) => {
+          prompt += `\nMatch #${i + 1} (Forums: ${match.sharedForums.join(', ')}):\n`;
+          prompt += `${match.advice}\n`;
+        });
+    
+        prompt += `\nGenerate personalized advice ONLY for the following forums attempted by the user: ${attemptedForums.join(', ')}. Start each forum's advice with the forum name and a short interpretation of the score. Omit unattempted forums.Here is the scale of the different forums. `;
+    
+        const response = await cohere.chat({
+          model: 'command-r-plus',
+          messages: [{ role: 'user', content: prompt }]
+        });
+    
+        const advice = response.message.content.map(item => item.text).join(" ");
+    
+        await session.run(
+          `MATCH (u:Person {userID: $userID})
+           MERGE (a:Advice {text: $advice, criteria: 'LikeMe', createdAt: timestamp()})
+           CREATE (u)-[:RECEIVED]->(a)`,
+          { userID, advice }
+        );
+    
+        return res.json({ advice });
+      } else {
+        // Fallback to average logic
+        const avgScores = {};
+        for (const { forum, query } of scoreQueries) {
+          if (!attemptedForums.includes(forum)) continue;
+    
+          const communityQuery = query.replace(`{userID: $userID}`, '');
+          const result = await session.run(communityQuery);
+          const scores = result.records.map(r => r.get('score')).filter(Number);
+          if (scores.length > 0) {
+            const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            avgScores[forum] = avg.toFixed(2);
+          }
+        }
+    
+        let avgPrompt = `No similar users found. Based on community averages for the forums the user attempted:\n`;
+        for (const forum in avgScores) {
+          avgPrompt += `- ${forum}: ${avgScores[forum]}\n`;
+        }
+        avgPrompt += `\nGenerate advice ONLY for these forums. Mention the forum and a short interpretation of the score. Do not include unattempted forums.`;
+    
+        const response = await cohere.chat({
+          model: 'command-r-plus',
+          messages: [{ role: 'user', content: avgPrompt }]
+        });
+    
+        const advice = response.message.content.map(item => item.text).join(" ");
+    
+        await session.run(
+          `MATCH (u:Person {userID: $userID})
+           MERGE (a:Advice {text: $advice, criteria: 'LikeMe', createdAt: timestamp()})
+           CREATE (u)-[:RECEIVED]->(a)`,
+          { userID, advice }
+        );
+    
+        return res.json({ advice });
+      }
+    }
+    
+
+    return res.status(400).json({ error: 'Invalid criteria' });
+
+  } catch (error) {
+    console.error('Error generating advice:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 

@@ -62,7 +62,7 @@ const StressScale = ({ onNext, onBack }) => {
       return;
     }
     try {
-      await axios.post("http://184.168.29.119:5009/api/stress-scale", {
+      await axios.post("http://localhost:5003/api/stress-scale", {
         userId,
         responses,
       });

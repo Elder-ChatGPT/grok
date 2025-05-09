@@ -3,14 +3,15 @@ import axios from "axios";
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
 import { useNavigate } from "react-router-dom";
 
-const StressScore = () => {
-  const [stressScore, setStressScore] = useState(null);
+const Literacyscore = () => {
+  const [literacyScore, setLiteracyScore] = useState(null);
+  const [literacyCategory, setLiteracyCategory] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStressScore = async () => {
+    const fetchLiteracyScore = async () => {
       try {
         const userId = localStorage.getItem("userID");
         if (!userId) {
@@ -19,8 +20,9 @@ const StressScore = () => {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5003/api/stress-score/${userId}`);
-        setStressScore(response.data.score);
+        const response = await axios.get(`http://184.168.29.119:5009/api/learn-scale/${userId}`);
+        setLiteracyScore(response.data.score);
+        setLiteracyCategory(getLiteracyLabel(response.data.score));
       } catch (err) {
         setError(err.response?.data?.error || "Network error. Check your connection.");
       } finally {
@@ -28,26 +30,32 @@ const StressScore = () => {
       }
     };
 
-    fetchStressScore();
+    fetchLiteracyScore();
   }, []);
 
+  const getLiteracyLabel = (score) => {
+    if (score >= 8) return "🧠 Strong Cognitive Function";
+    if (score >= 6) return "🔍 Mild Cognitive Changes";
+    return "⚠️ Potential Cognitive Concerns";
+  };
+
   const data = [
-    { name: "Score", value: stressScore !== null ? stressScore : 0, fill: "#4ad9e4" },
-    { name: "Max", value: 40, fill: "#89f0f0" },
+    { name: "Score", value: literacyScore !== null ? literacyScore : 0, fill: "#4ad9e4" },
+    { name: "Max", value: 10, fill: "#89f0f0" },
   ];
 
   return (
     <div style={styles.pageContainer}>
       <div style={styles.contentWrapper}>
         <div style={styles.resultsContainer}>
-          <h1 style={styles.header}>Stress Level Score</h1>
+          <h1 style={styles.header}>Cognitive Literacy Score</h1>
           {loading ? (
             <p style={styles.loading}>Loading...</p>
           ) : error ? (
             <p style={styles.error}>{error}</p>
           ) : (
             <>
-              <ResponsiveContainer width="100%" height={200}>
+              <ResponsiveContainer width="100%" height={240}>
                 <RadialBarChart
                   cx="50%"
                   cy="100%"
@@ -59,14 +67,15 @@ const StressScore = () => {
                   data={data}
                 >
                   <RadialBar minAngle={15} background clockWise dataKey="value" />
-                  <PolarAngleAxis type="number" domain={[0, 40]} angleAxisId={0} />
+                  <PolarAngleAxis type="number" domain={[0, 10]} angleAxisId={0} />
                 </RadialBarChart>
               </ResponsiveContainer>
-              <div style={styles.scoreDisplay}>{stressScore !== null ? stressScore : "N/A"}</div>
+              <div style={styles.scoreDisplay}>{literacyScore !== null ? literacyScore : "N/A"} / 10</div>
+              <div style={styles.qualityLabel}>{literacyScore !== null ? literacyCategory : ""}</div>
               <div style={styles.legend}>
-                <p>✅ Low Stress: <strong>0–13</strong></p>
-                <p>⚠️ Moderate Stress: <strong>14–26</strong></p>
-                <p>🚨 High Stress: <strong>27–40</strong></p>
+                <p>🧠 Strong Cognitive Function: <strong>8–10</strong></p>
+                <p>🔍 Mild Cognitive Changes: <strong>6–7</strong></p>
+                <p>⚠️ Potential Cognitive Concerns: <strong>0–5</strong></p>
               </div>
             </>
           )}
@@ -121,6 +130,11 @@ const styles = {
     color: "#4ad9e4",
     marginTop: "-10px",
   },
+  qualityLabel: {
+    fontSize: "1.2rem",
+    marginTop: "5px",
+    color: "#2ecf80",
+  },
   legend: {
     textAlign: "center",
     marginTop: "10px",
@@ -138,4 +152,4 @@ const styles = {
   },
 };
 
-export default StressScore;
+export default Literacyscore;

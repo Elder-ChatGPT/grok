@@ -1,37 +1,92 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import image from "./images/ruben9.png";
 import image1 from "./images/ruben10.png";
 import logo from "./images/cape1.png";
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'
+
+
+// Custom hook to get query parameters (userId)
+
+const useUserId = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  return queryParams.get('userId'); 
+};
+
 
 const Home = () => {
-  const navigate = useNavigate();
+
+   const navigate = useNavigate();
+    const userId = useUserId(); // Call the custom hook here, at the top of the component
+    
+    const [storedUserId, setStoredUserId] = useState(null); // State to store the userId
+  
+
+ useEffect(() => {
+      if (userId) {
+        setStoredUserId(userId); // Store userId in state
+        localStorage.setItem('userID', userId); // Store userId in localStorage
+      }
+    }, [userId]); // Dependency array ensures it runs only when userId changes
+
 
   const handleEvaluationClick = () => {
+
     navigate("/evaluations");
   };
+
+  const [hoveredLink, setHoveredLink] = useState(null);
+
+const getLinkStyle = (linkKey, baseColor) => ({
+  color: hoveredLink === linkKey ? 'green' : baseColor,
+  textDecoration: hoveredLink === linkKey ? 'underline' : 'none',
+  fontWeight: 'bold',
+  cursor: 'pointer',
+});
+  
 
   return (
     <div>
       <div style={pageStyle}>
         <div style={leftColumnStyle}>
           <img src={image} alt="pic" style={squareImageStyle} />
+
+
           <div style={textStyle}>
-            <p style={paragraphStyle}>
-              Personalized Services: The first step is to assess your current situation. We use several
-              standard evaluations to get a basic understanding of your personal needs and lifestyle habits.
-              It’s recommended you take all the S.L.E.D.S.S. Evaluations for a full picture of your lifestyle habits. However, you can also choose to take a few to start the process.
-            </p>
-          </div>
+  <p style={paragraphStyle}>
+    <Link
+      to="/login"
+      style={getLinkStyle('unregistered', '#0e5580')}
+      onMouseEnter={() => setHoveredLink('unregistered')}
+      onMouseLeave={() => setHoveredLink(null)}
+    >
+      Unregistered Services:
+    </Link>{' '}
+    Get general information from our SmartCoach regarding healthy lifestyle choices without needing to register with Kin-Keepers. This provides commonly available information for improving health and fitness.
+    <br /><br /><br />
+    <Link
+      to="/evaluations"
+      style={getLinkStyle('personalized', '#02678E')}
+      onMouseEnter={() => setHoveredLink('personalized')}
+      onMouseLeave={() => setHoveredLink(null)}
+    >
+      Personalized Services:
+    </Link>{' '}
+    When you register with Kin-Keepers, you receive personalized guidance from our SmartCoach. We assess your needs and habits using trusted evaluations, then create a custom plan to help you track and improve your lifestyle choices.
+  </p>
+</div>
+
         </div>
 
         <div style={rightColumnStyle}>
           <p style={paragraphStyle}>
-            The Kin-Keepers’ S.L.E.D.S.S. Process <br />teaches you how to improve brain health by creating healthy habits in these six areas of life:
+          Kin-Keepers guides you through healthier lifestyle choices to boost your brain health. We start by assessing your current habits in six key areas: Socialization, Learning, Exercise, Diet, Sleep, and Stress (S.L.E.D.S.S.). Next, Kin-Keepers' SmartCoach provides guidance and tracks your progress toward healthier habits. Start your evaluations by clicking on the link below. 
           </p>
           <img src={image1} alt="pic" style={circleImageStyle} />
           <button style={evaluationButtonStyle} onClick={handleEvaluationClick}>
-            S.L.E.D.S.S. Evaluations
+            Start Evaluations
           </button>
         </div>
       </div>

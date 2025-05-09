@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import foodImage from "./images/old.png";
-import weightImage from "./images/old1.png";
-import chairImage from "./images/old2.png";
-import stressImage from "./images/old3.png";
+import foodImage from "./images/lit1.png";
+import weightImage from "./images/lit2.png";
+import chairImage from "./images/lit3.png";
+import stressImage from "./images/lit4.png";
 import neuroImage from "./images/old4.png";
+import cardImage from "./images/lit5.png";
+import classImage from "./images/lit6.png";
 
-const TOTAL_STEPS = 5;
 
-const MnaTest = () => {
+const TOTAL_STEPS = 7;
+
+const Literacy = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({});
@@ -35,16 +38,16 @@ const MnaTest = () => {
     if (!userID) return;
 
     try {
-      await axios.post("http://localhost:5003/api/mna-test", {
+      await axios.post("http://184.168.29.119:5009/api/learn-scale", {
         userID,
         answers,
       });
       alert("Test submitted successfully!");
       const storedCompletedTests = JSON.parse(localStorage.getItem('completedTests')) || {};
       const completionDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
-      storedCompletedTests[userID] = { ...(storedCompletedTests[userID] || {}), Diet: { completedAt: completionDate } };
+      storedCompletedTests[userID] = { ...(storedCompletedTests[userID] || {}), Learning: { completedAt: completionDate } };
       localStorage.setItem('completedTests', JSON.stringify(storedCompletedTests));
-      navigate("/mna");
+      navigate("/literacyscore");
     } catch (error) {
       console.error("Error submitting test:", error);
       alert("Failed to submit test. Please try again.");
@@ -58,22 +61,32 @@ const MnaTest = () => {
       3: "mobility",
       4: "stress",
       5: "neuro",
+      6: "skill",
+      7: "class",
     };
     return answers[stepQuestions[step]] !== undefined;
   };
 
   return (
     <div style={{ maxWidth: "650px", margin: "auto", textAlign: "left", fontFamily: "Arial, sans-serif", fontSize: "20px" }}>
-      <h2 style={{ color: "green", textAlign: "center" }}>Mini Nutritional Assessment</h2>
-      <h3 style={{ color: "green", textAlign: "center" }}>(MNA)</h3>
+      <h2 style={{  textAlign: "center" }}> Digital Literacy Survey for Older Adults</h2>
+      <h3 style={{  textAlign: "center" }}> Please take some time to answer ALL the questions</h3>
+
+
+      <div style={{ marginTop: "30px" }}>
+        <div style={{ height: "7px", background: "#e0e0e0", borderRadius: "5px", width: "100%" }}>
+          <div style={{ width: `${progress}%`, background: "#D38F5D", height: "100%", borderRadius: "10px", transition: "width 0.7s ease-in-out" }}></div>
+        </div>
+      </div>
+
 
       {step === 1 && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "30px" }}>
           <div style={{ flex: 1, marginRight: "30px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "25px" }}>
-              Has food intake declined over the past 3 months due to loss of appetite, digestive problems, chewing, or swallowing difficulties?
+            How old are you?
             </p>
-            {["severe decrease in food intake", "moderate decrease in food intake", "no decrease in food intake"].map((option) => (
+            {["Under 50", "50-59", "60-69", "70 and above"].map((option) => (
               <label key={option} style={{ display: "block", marginBottom: "20px" }}>
                 <input type="radio" name="food-intake" value={option} checked={answers["food-intake"] === option} onChange={(e) => handleSelect("food-intake", e.target.value)} style={{ marginRight: "10px" }} />
                 {option}
@@ -88,16 +101,17 @@ const MnaTest = () => {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "30px" }}>
           <div style={{ flex: 1, marginRight: "30px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "25px" }}>
-            Weight loss during the last 3 months
+            Which device do you usually use for digital activities?
+            
             </p>
-            {["weight loss greater than 3 kg (6.6 lbs)", "does not know", "weight loss between 1 and 3 kg (2.2 and 6.6 lbs)", "no weight loss"].map((option)=> (
+            {[" Smartphone", "Tablet", "Laptop/Desktop computer", "Smart TV", "None"].map((option)=> (
               <label key={option} style={{ display: "block", marginBottom: "20px" }}>
                 <input type="radio" name="weight-loss" value={option} checked={answers["weight-loss"] === option} onChange={(e) => handleSelect("weight-loss", e.target.value)} style={{ marginRight: "10px" }} />
                 {option}
               </label>
             ))}
           </div>
-          <img src={weightImage} alt="Weight loss" style={{ width: "200px" }} />
+          <img src={weightImage} alt="Weight loss" style={{ width: "250px" }} />
         </div>
       )}
 
@@ -105,9 +119,9 @@ const MnaTest = () => {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "30px" }}>
           <div style={{ flex: 1, marginRight: "30px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "25px" }}>
-            Mobility
+            How often do you use the internet?
             </p>
-            {["bed or chair bound", "able to get out of bed / chair but does not go out", "goes out"].map((option)=> (
+            {["Daily", "A few times a week", " A few times a month", "Rarely/Never"].map((option)=> (
               <label key={option} style={{ display: "block", marginBottom: "20px" }}>
                 <input type="radio" name="mobility" value={option} checked={answers["mobility"] === option} onChange={(e) => handleSelect("mobility", e.target.value)} style={{ marginRight: "10px" }} />
                 {option}
@@ -123,9 +137,10 @@ const MnaTest = () => {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "30px" }}>
           <div style={{ flex: 1, marginRight: "30px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "25px" }}>
-            Has suffered psychological stress or acute disease in the past 3 months?
+            Which of the following online activity do you usually engage in?
+            
             </p>
-            {["yes", "no"].map((option) => (
+            {[" Sending emails", "Browsing social media" , "Online shopping", "Online banking" , "Watching videos"].map((option) => (
               <label key={option} style={{ display: "block", marginBottom: "20px" }}>
                 <input type="radio" name="stress" value={option} checked={answers["stress"] === option} onChange={(e) => handleSelect("stress", e.target.value)} style={{ marginRight: "10px" }} />
                 {option}
@@ -141,9 +156,9 @@ const MnaTest = () => {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "30px" }}>
           <div style={{ flex: 1, marginRight: "30px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "25px" }}>
-            Has suffered psychological stress or acute disease in the past 3 months?
+            Do you believe that digital literacy is important for older adults?
             </p>
-            {["severe dementia or depression", "mild dementia", "no psychological problems"].map((option) => (
+            {["Yes", " No", " Not sure"].map((option) => (
               <label key={option} style={{ display: "block", marginBottom: "20px" }}>
                 <input type="radio" name="neuro" value={option} checked={answers["neuro"] === option} onChange={(e) => handleSelect("neuro", e.target.value)} style={{ marginRight: "10px" }} />
                 {option}
@@ -155,23 +170,58 @@ const MnaTest = () => {
       )}
 
 
-      <div style={{ marginTop: "30px" }}>
-        <div style={{ height: "7px", background: "#e0e0e0", borderRadius: "5px", width: "100%" }}>
-          <div style={{ width: `${progress}%`, background: "green", height: "100%", borderRadius: "5px", transition: "width 0.7s ease-in-out" }}></div>
+
+
+{step === 6 && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "30px" }}>
+          <div style={{ flex: 1, marginRight: "30px" }}>
+            <p style={{ fontWeight: "bold", marginBottom: "25px" }}>
+            What motivates you to improve your digital skills? 
+            </p>
+            {["Stay connected with family and friends", "Accessing information/news", "Entertainment purposes", "Improving job opportunities", "Pursuing hobbies/interests"].map((option) => (
+              <label key={option} style={{ display: "block", marginBottom: "20px" }}>
+                <input type="radio" name="skill" value={option} checked={answers["skill"] === option} onChange={(e) => handleSelect("skill", e.target.value)} style={{ marginRight: "10px" }} />
+                {option}
+              </label>
+            ))}
+          </div>
+          <img src={cardImage} alt="skill" style={{ width: "250px" }} />
         </div>
-      </div>
+      )}
+
+
+{step === 7 && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "30px" }}>
+          <div style={{ flex: 1, marginRight: "30px" }}>
+            <p style={{ fontWeight: "bold", marginBottom: "25px" }}>
+            Have you taken any digital literacy classes or courses?
+            </p>
+            {["Yes", "No" ].map((option) => (
+              <label key={option} style={{ display: "block", marginBottom: "20px" }}>
+                <input type="radio" name="class" value={option} checked={answers["class"] === option} onChange={(e) => handleSelect("class", e.target.value)} style={{ marginRight: "10px" }} />
+                {option}
+              </label>
+            ))}
+          </div>
+          <img src={classImage} alt="class" style={{ width: "250px" }} />
+        </div>
+      )}
+
+
+
+     
 
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
         <button onClick={() => setStep(step - 1)} disabled={step === 1} style={{ background: "#0e5580", color: "white", padding: "12px 24px", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "20px" }}>Back</button>
         {step < TOTAL_STEPS && isStepAnswered() && (
-          <button onClick={() => setStep(step + 1)} style={{ background: "#0e5580", color: "white", padding: "12px 24px", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "20px" }}>Next</button>
+          <button onClick={() => setStep(step + 1)} style={{ background: "#D38F5D", color: "white", padding: "12px 24px", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "20px" }}>Next</button>
         )}
         {step === TOTAL_STEPS && isStepAnswered() && (
-          <button onClick={submitTest} style={{ background: "#28a745", color: "white", padding: "12px 24px", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "20px" }}>Submit</button>
+          <button onClick={submitTest} style={{ background: "#D38F5D", color: "white", padding: "12px 24px", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "20px" }}>Submit</button>
         )}
       </div>
     </div>
   );
 };
 
-export default MnaTest;
+export default Literacy;

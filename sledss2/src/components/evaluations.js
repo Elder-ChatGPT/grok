@@ -10,15 +10,17 @@ import SleepImg from './images/Slp.png';
 const Evaluations = () => {
   const navigate = useNavigate();
   const [completedTests, setCompletedTests] = useState({});
+ const [userID, setUserId] = useState('');
 
   useEffect(() => {
-    const userId = localStorage.getItem("userID"); // Get current user ID
-    if (!userId) return; // If no user is logged in, do nothing
-
+    const userId = localStorage.getItem("userID");
+    if (userId) {
+      setUserId(userId);
+    }
+    if (!userId) return;
+    
     const storedCompletedTests = JSON.parse(localStorage.getItem("completedTests")) || {};
-    console.log("Loaded completed tests:", storedCompletedTests); // Debugging
-
-    setCompletedTests(storedCompletedTests[userId] || {}); // ✅ Load only the current user's completed tests
+    setCompletedTests(storedCompletedTests[userId] || {});
   }, []);
 
   const categories = [
@@ -30,14 +32,18 @@ const Evaluations = () => {
     { name: "Sleep", color: "#A685E2", image: SleepImg, route: "/sleep" },
   ];
 
+  const hasCompletedAtLeastOneTest = Object.values(completedTests).some(test => test.completedAt);
+
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>S.L.E.D.S.S. Evaluations</h1>
       <div style={styles.grid}>
         {categories.map((category) => {
-          const testInfo = completedTests[category.name]; // ✅ Get test completion data
+          const testInfo = completedTests[category.name];
           return (
+            
             <div key={category.name} style={styles.categoryContainer}>
+              
               <img src={category.image} alt={category.name} style={styles.image} />
               <div style={styles.buttonContainer}>
                 <button
@@ -46,7 +52,6 @@ const Evaluations = () => {
                 >
                   {category.name}
                 </button>
-                {/* ✅ Show only the completion date if test is completed */}
                 {testInfo && testInfo.completedAt && (
                   <span style={styles.completedDate}>
                     Completed on: {testInfo.completedAt.split(',')[0]}
@@ -57,6 +62,12 @@ const Evaluations = () => {
           );
         })}
       </div>
+
+      {hasCompletedAtLeastOneTest && (
+        <button style={styles.adviceButton} onClick={() => navigate("/evaluations")}>
+Get Health Advice 
+        </button>
+      )}
     </div>
   );
 };
@@ -68,9 +79,11 @@ const styles = {
     fontFamily: "Arial, sans-serif",
     backgroundColor: "#f5f5f5",
     borderRadius: "10px",
+    minHeight: "100vh",
+    position: "relative",
   },
   title: {
-    fontSize: "20px", // Increased font size here
+    fontSize: "24px",
     fontWeight: "bold",
     color: "#333",
     marginBottom: "20px",
@@ -94,7 +107,7 @@ const styles = {
   },
   image: {
     width: "100px",
-    height: "80px",
+    height: "90px",
     objectFit: "cover",
     borderRadius: "8px",
   },
@@ -111,15 +124,26 @@ const styles = {
     color: "white",
     border: "none",
     borderRadius: "20px",
-    fontSize: "20px", // Increased font size here
+    fontSize: "18px",
     fontWeight: "bold",
     cursor: "pointer",
     transition: "background-color 0.3s",
   },
   completedDate: {
-    fontSize: "20px", // Increased font size here
+    fontSize: "18px",
     color: "#555",
     marginTop: "5px",
+  },
+  adviceButton: {
+    marginTop: "30px",
+    backgroundColor:  " #0E5580",
+    color: "#fff",
+    padding: "12px 30px",
+    fontSize: "18px",
+    borderRadius: "8px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
   },
 };
 

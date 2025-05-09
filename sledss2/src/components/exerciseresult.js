@@ -3,14 +3,14 @@ import axios from "axios";
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
 import { useNavigate } from "react-router-dom";
 
-const StressScore = () => {
-  const [stressScore, setStressScore] = useState(null);
+const Activityscore = () => {
+  const [exerciseScore, setExerciseScore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStressScore = async () => {
+    const fetchExerciseScore = async () => {
       try {
         const userId = localStorage.getItem("userID");
         if (!userId) {
@@ -19,8 +19,8 @@ const StressScore = () => {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5003/api/stress-score/${userId}`);
-        setStressScore(response.data.score);
+        const response = await axios.get(`http://184.168.29.119:5009/api/exercise-score/${userId}`);
+        setExerciseScore(response.data.score);
       } catch (err) {
         setError(err.response?.data?.error || "Network error. Check your connection.");
       } finally {
@@ -28,26 +28,34 @@ const StressScore = () => {
       }
     };
 
-    fetchStressScore();
+    fetchExerciseScore();
   }, []);
 
+  const getActivityLevelLabel = (score) => {
+    if (score < 50) return "💪 Very Low Activity";
+    if (score < 150) return "🚶 Low to Moderate Activity";
+    if (score < 250) return "🏃 Moderate to Active";
+    return "🔥 Highly Active";
+  };
+  
+
   const data = [
-    { name: "Score", value: stressScore !== null ? stressScore : 0, fill: "#4ad9e4" },
-    { name: "Max", value: 40, fill: "#89f0f0" },
+    { name: "Score", value: exerciseScore !== null ? exerciseScore : 0, fill: "#4ad9e4" },
+    { name: "Max", value: 300, fill: "#89f0f0" },
   ];
 
   return (
     <div style={styles.pageContainer}>
       <div style={styles.contentWrapper}>
         <div style={styles.resultsContainer}>
-          <h1 style={styles.header}>Stress Level Score</h1>
+          <h1 style={styles.header}>Exercise Quality Score</h1>
           {loading ? (
             <p style={styles.loading}>Loading...</p>
           ) : error ? (
             <p style={styles.error}>{error}</p>
           ) : (
             <>
-              <ResponsiveContainer width="100%" height={200}>
+              <ResponsiveContainer width="100%" height={240}>
                 <RadialBarChart
                   cx="50%"
                   cy="100%"
@@ -59,14 +67,16 @@ const StressScore = () => {
                   data={data}
                 >
                   <RadialBar minAngle={15} background clockWise dataKey="value" />
-                  <PolarAngleAxis type="number" domain={[0, 40]} angleAxisId={0} />
+                  <PolarAngleAxis type="number" domain={[0, 350]} angleAxisId={0} />
                 </RadialBarChart>
               </ResponsiveContainer>
-              <div style={styles.scoreDisplay}>{stressScore !== null ? stressScore : "N/A"}</div>
+              <div style={styles.scoreDisplay}>{exerciseScore !== null ? exerciseScore : "N/A"} / 350</div>
+              <div style={styles.qualityLabel}>{exerciseScore !== null ? getActivityLevelLabel(exerciseScore) : ""}</div>
               <div style={styles.legend}>
-                <p>✅ Low Stress: <strong>0–13</strong></p>
-                <p>⚠️ Moderate Stress: <strong>14–26</strong></p>
-                <p>🚨 High Stress: <strong>27–40</strong></p>
+                <p>💪 Very Low Activity: <strong>0–50</strong></p>
+                <p>🚶 Low to Moderate Activity: <strong>51–150</strong></p>
+                <p>🏃 Moderate to Active: <strong>151–250</strong></p>
+                <p> 🔥Highly Active: <strong>251–350</strong></p>
               </div>
             </>
           )}
@@ -79,6 +89,7 @@ const StressScore = () => {
   );
 };
 
+// Styling stays unchanged
 const styles = {
   pageContainer: {
     display: "flex",
@@ -121,6 +132,11 @@ const styles = {
     color: "#4ad9e4",
     marginTop: "-10px",
   },
+  qualityLabel: {
+    fontSize: "1.2rem",
+    marginTop: "5px",
+    color: "#2ecf80",
+  },
   legend: {
     textAlign: "center",
     marginTop: "10px",
@@ -138,4 +154,5 @@ const styles = {
   },
 };
 
-export default StressScore;
+export default Activityscore;
+

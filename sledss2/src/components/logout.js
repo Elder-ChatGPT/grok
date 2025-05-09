@@ -28,7 +28,8 @@ const Logout = () => {
     }
 
     alert('Logout successful');
-    navigate('/');
+    
+    navigate('http://elderchatgpt.com:5018/');
   };
 
   if (!isLoggedIn) return null; // 👈 Don't show the component if user is not logged in
