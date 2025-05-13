@@ -1052,6 +1052,32 @@ The learning scale is  Strong Cognitive Function: 8–10
 
 
 
+// Chat endpoint that handles both predefined and custom questions
+app.post('/chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: 'Message cannot be empty' });
+    }
+    
+    // Call Cohere's chat API with the provided message (question)
+    const response = await cohere.chat({
+      model: 'command-r-plus',
+      messages: [{ role: 'user', content: message }],
+    });
+    
+    // Extract advice from the response
+    const contentText = response.message.content.map(item => item.text).join(" ");
+    res.json(contentText);
+    
+  } catch (error) {
+    console.error('Error communicating with Cohere API:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
 
 
 // Start server

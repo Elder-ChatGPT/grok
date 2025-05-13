@@ -62,7 +62,7 @@ const getLinkStyle = (linkKey, baseColor) => ({
       onMouseEnter={() => setHoveredLink('unregistered')}
       onMouseLeave={() => setHoveredLink(null)}
     >
-      Unregistered Services:
+      Free Services:
     </Link>{' '}
     Get general information from our SmartCoach regarding healthy lifestyle choices without needing to register with Kin-Keepers. This provides commonly available information for improving health and fitness.
     <br /><br /><br />

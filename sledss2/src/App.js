@@ -54,22 +54,22 @@ const App = () => {
   return (
     <Router>
       <div style={menuStyle}>
-    <Link to="/home">
+    <Link to="/">
         <img src={logo} alt="Logo" style={logoStyle} />
     </Link>
-    <Link to="/home" style={{ ...welcomeStyle, textDecoration: 'none', cursor: 'pointer' }}>
+    <Link to="/" style={{ ...welcomeStyle, textDecoration: 'none', cursor: 'pointer' }}>
   Healthy Lifestyle Choices
 </Link>
 
         <div style={menuLinksStyle}>
           <Logout />
 
-          <Link style={linkStyle} to="/home">Home</Link>
+          <Link style={linkStyle} to="/">Home</Link>
 
           <div style={{ position: "relative" }}>
             
             <span style={linkStyle} onClick={toggleDropdown}>
-              Services
+              Get Started
             </span>
             {demoDropdown && (
               <div style={dropdownStyle} onMouseLeave={closeDropdown}>
@@ -89,7 +89,7 @@ const App = () => {
                     e.target.style.color = "#1E3A5F";
                   }}
                 >
-                  Unregistered Services 
+                  No-Login Services.
                 </Link>
                 <Link
                   style={{
@@ -107,7 +107,7 @@ const App = () => {
                     e.target.style.color = "#1E3A5F";
                   }}
                 >
-                  Personalized Services
+                  Login-Services
                 </Link>
               </div>
             )}
@@ -120,7 +120,7 @@ const App = () => {
 
       <div style={{ marginTop: "80px" }}>
         <Routes>
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/evaluations" element={<ProtectedRoute><Evaluations /></ProtectedRoute>} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
