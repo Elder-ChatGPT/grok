@@ -115,6 +115,7 @@ const App = () => {
           
           <Link style={linkStyle} to="/about"></Link>
           <Link style={linkStyle} to="/evaluation"></Link>
+          <Link style={linkStyle} to="/evaluation"></Link>
         </div>
       </div>
 
