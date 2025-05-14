@@ -4,6 +4,7 @@ import image1 from "./images/ruben10.png";
 import logo from "./images/cape1.png";
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 
 // Custom hook to get query parameters (userId)
