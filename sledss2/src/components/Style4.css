@@ -1,62 +1,51 @@
 /* General Styling */
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f9ff;
-  margin: 0;
-  padding: 0;
+.advice-text {
+  margin-top: 20px;
+  padding: 15px;
+  border: 2px solid #0E5580;
+  border-radius: 10px;
+  background-color: #eef4ff;
+  font-size: 1rem;
+  color: #333;
+  white-space: pre-wrap; /* Preserve formatting */
+  text-align: left;
 }
 
 .container {
   text-align: center;
-  margin: 40px auto;
-  padding: 0 20px;
-  max-width: 900px;
+  margin: 20px auto;
+  max-width: 800px;
 }
 
 .title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #0E5580;
-}
-
-.criteria-description {
-  font-size: 22px;
-  color: #555;
-  margin-bottom: 30px;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 /* Criteria Section */
 .criteria-container {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 30px;
-  margin-bottom: 30px;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .criteria-box {
   border: 2px solid #ddd;
-  padding: 25px;
-  border-radius: 12px;
+  padding: 15px;
+  border-radius: 10px;
   cursor: pointer;
-  width: 280px;
-  transition: all 0.3s ease;
-  background-color: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  width: 300px;
   text-align: center;
-}
-
-.criteria-box:hover {
-  border-color: #0E5580;
-  transform: translateY(-2px);
+  transition: all 0.3s ease-in-out;
+  background-color: #f9f9f9;
 }
 
 .criteria-box.selected {
   border-color: #007bff;
-  background-color: #eaf5ff;
-  box-shadow: 0 0 12px rgba(0, 123, 255, 0.2);
+  background-color: #e0f0ff;
 }
 
 .radio-input {
@@ -65,60 +54,74 @@ body {
 
 .radio-label {
   display: block;
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #0E5580;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
   cursor: pointer;
+  color:#0E5580;
+}
+
+.criteria-description {
+  font-size: 16px;
+  color: #555;
 }
 
 /* Buttons */
 .button-container {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
-.advice-button,
-.back-button {
+.advice-button, .back-button {
   background-color: #0E5580;
   color: white;
-  padding: 12px 25px;
-  font-size: 20px;
-  font-weight: 500;
+  padding: 12px 20px;
+  font-size: 16px;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  margin: 10px;
+  width: 200px;
 }
 
-.advice-button:hover,
-.back-button:hover {
-  background-color: #08486d;
+.advice-button:hover, .back-button:hover {
+  background-color: #0E5580;
 }
 
 /* Advice Display */
 .advice-container {
-  margin-top: 40px;
-  padding: 25px;
-  background-color: #ffffff;
-  border: 2px solid #0E5580;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  max-width: 650px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
+  padding: 20px;
+  max-width: 500px;
+  margin: 50px auto;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.advice-container h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
 }
 
 .advice-text {
-  font-size: 22px;
+  font-size: 18px;
   color: #333;
-  line-height: 1.6;
-  white-space: pre-wrap;
+  line-height: 1.5;
+  text-align: left;
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .advice-text strong {
-  font-size: 1.8rem;
+  font-size: 1.1rem;
   color: #0E5580;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
+

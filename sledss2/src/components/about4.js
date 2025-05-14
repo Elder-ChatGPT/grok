@@ -64,7 +64,7 @@ const About4 = () => {
 
       <div className="button-container">
         <button onClick={handleGetAdvice} disabled={loading} className="advice-button">
-          {loading ? 'Fetching Advice...' : 'Get Health Advice'}
+          {loading ? 'Fetching Advice...' : 'Get Advice'}
         </button>
       </div>
 
