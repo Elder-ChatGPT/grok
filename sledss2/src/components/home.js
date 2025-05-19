@@ -58,17 +58,17 @@ const getLinkStyle = (linkKey, baseColor) => ({
       onMouseEnter={() => setHoveredLink('unregistered')}
       onMouseLeave={() => setHoveredLink(null)}
     >
-      Free Services:
+      General Services:
     </Link>{' '}
     Get general information from our SmartCoach regarding healthy lifestyle choices without needing to register with Kin-Keepers. This provides commonly available information for improving health and fitness.
-    <br /><br /><br />
+    <br /><br />
     <Link
       to="/evaluations"
       style={getLinkStyle('personalized', '#02678E')}
       onMouseEnter={() => setHoveredLink('personalized')}
       onMouseLeave={() => setHoveredLink(null)}
     >
-      Personalized Services:
+      My Services:
     </Link>{' '}
     When you register with Kin-Keepers, you receive personalized guidance from our SmartCoach. We assess your needs and habits using trusted evaluations, then create a custom plan to help you track and improve your lifestyle choices.
   </p>
@@ -77,13 +77,15 @@ const getLinkStyle = (linkKey, baseColor) => ({
         </div>
 
         <div style={rightColumnStyle}>
+           
           <p style={paragraphStyle}>
           Kin-Keepers guides you through healthier lifestyle choices to boost your brain health. We start by assessing your current habits in six key areas: Socialization, Learning, Exercise, Diet, Sleep, and Stress (S.L.E.D.S.S.). Next, Kin-Keepers' SmartCoach provides guidance and tracks your progress toward healthier habits. Start your evaluations by clicking on the link below. 
           </p>
-          <img src={image1} alt="pic" style={circleImageStyle} />
           <button style={evaluationButtonStyle} onClick={handleEvaluationClick}>
             Start Evaluations
           </button>
+          <img src={image1} alt="pic" style={circleImageStyle} />
+          
         </div>
       </div>
 

@@ -69,7 +69,7 @@ const App = () => {
           <div style={{ position: "relative" }}>
             
             <span style={linkStyle} onClick={toggleDropdown}>
-              Services
+              Get Started
             </span>
             {demoDropdown && (
               <div style={dropdownStyle} onMouseLeave={closeDropdown}>
@@ -89,7 +89,7 @@ const App = () => {
                     e.target.style.color = "#1E3A5F";
                   }}
                 >
-                  No-Login Services
+                  General-Services
                 </Link>
                 <Link
                   style={{
@@ -107,7 +107,7 @@ const App = () => {
                     e.target.style.color = "#1E3A5F";
                   }}
                 >
-                  Login-Services
+                  My-Services
                 </Link>
               </div>
             )}
