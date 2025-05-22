@@ -46,7 +46,7 @@ const Login = () => {
     setError(null);
     setResponse('');
     try {
-      const res = await fetch('http://184.168.29.119:5009/chat', {
+      const res = await fetch('https://sledssback.elderchatgpt.com./chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

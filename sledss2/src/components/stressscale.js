@@ -62,7 +62,7 @@ const StressScale = ({ onNext, onBack }) => {
       return;
     }
     try {
-      await axios.post("http://184.168.29.119:5009/api/stress-scale", {
+      await axios.post("https://sledssback.elderchatgpt.com./api/stress-scale", {
         userId,
         responses,
       });

@@ -20,7 +20,7 @@ const Literacyscore = () => {
           return;
         }
 
-        const response = await axios.get(`http://184.168.29.119:5009/api/learn-scale/${userId}`);
+        const response = await axios.get(`https://sledssback.elderchatgpt.com./api/learn-scale/${userId}`);
         setLiteracyScore(response.data.score);
         setLiteracyCategory(getLiteracyLabel(response.data.score));
       } catch (err) {

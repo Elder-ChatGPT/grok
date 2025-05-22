@@ -19,7 +19,7 @@ const PittScore = () => {
           return;
         }
 
-        const response = await axios.get(`http://184.168.29.119:5009/api/sleep-score/${userId}`);
+        const response = await axios.get(`https://sledssback.elderchatgpt.com./api/sleep-score/${userId}`);
         setSleepScore(response.data.score);
       } catch (err) {
         setError(err.response?.data?.error || "Network error. Check your connection.");

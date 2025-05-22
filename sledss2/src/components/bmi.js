@@ -40,7 +40,7 @@ const BmiEvaluation = () => {
       }
 
       try {
-        const response = await axios.post("http://184.168.29.119:5009/api/save-bmi", {
+        const response = await axios.post("https://sledssback.elderchatgpt.com./api/save-bmi", {
           userID,
           bmi: bmiValue,
           category

@@ -38,7 +38,7 @@ const Socialtest = () => {
   useEffect(() => {
     const fetchAnswers = async () => {
       try {
-        const response = await fetch(`http://184.168.29.119:5009/social/${userId}`);
+        const response = await fetch(`https://sledssback.elderchatgpt.com./social/${userId}`);
         if (response.ok) {
           const data = await response.json();
           setAnswers(data.answers || [[], [], []]);
@@ -77,7 +77,7 @@ const Socialtest = () => {
     };
 
     try {
-      const response = await fetch('http://184.168.29.119:5009/social', {
+      const response = await fetch('https://sledssback.elderchatgpt.com./social', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'  

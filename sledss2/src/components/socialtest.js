@@ -68,7 +68,7 @@ const Socialtest = () => {
       const submission = { userId, answers: formattedAnswers };
 
       try {
-        const response = await fetch('http://184.168.29.119:5009/social', {
+        const response = await fetch('https://sledssback.elderchatgpt.com./social', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(submission),

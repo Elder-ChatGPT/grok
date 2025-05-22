@@ -18,7 +18,7 @@ const About4 = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('http://184.168.29.119:5009/get-advice', {
+      const response = await axios.post('https://sledssback.elderchatgpt.com./get-advice', {
         userID,
         criteria,
       });

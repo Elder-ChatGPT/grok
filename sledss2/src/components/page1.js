@@ -17,7 +17,7 @@ const Page1 = () => {
     const calculatedAge = currentYear - Number(yearOfBirth);
     
     try {
-      await axios.post('http://184.168.29.119:5009/register', { 
+      await axios.post('https://sledssback.elderchatgpt.com./register', { 
         email, 
         password, 
         age: calculatedAge, 

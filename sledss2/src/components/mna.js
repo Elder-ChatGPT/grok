@@ -19,7 +19,7 @@ const MnaResult = () => {
           return;
         }
 
-        const response = await axios.get("http://184.168.29.119:5009/api/mna-score", {
+        const response = await axios.get("https://sledssback.elderchatgpt.com./api/mna-score", {
           params: { userID },
         });
 

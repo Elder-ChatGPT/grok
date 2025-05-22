@@ -38,7 +38,7 @@ const Literacy = () => {
     if (!userID) return;
 
     try {
-      await axios.post("http://184.168.29.119:5009/api/learn-scale", {
+      await axios.post("https://sledssback.elderchatgpt.com./api/learn-scale", {
         userID,
         answers,
       });

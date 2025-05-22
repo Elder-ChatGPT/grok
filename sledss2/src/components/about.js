@@ -9,7 +9,7 @@ const About = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://184.168.29.119:5009/login', { email });
+      const response = await axios.post('https://sledssback.elderchatgpt.com./login', { email });
       localStorage.setItem('token', response.data.token); // Store JWT token
       localStorage.setItem('userID', response.data.userID); // Store userID for score tracking
       alert('Login successful');
