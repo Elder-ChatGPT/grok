@@ -9,7 +9,7 @@ const { CohereClientV2 } = require('cohere-ai');
 const cohere = new CohereClientV2({
  token: process.env.COHERE_API_KEY, // Replace with your actual Cohere API Key
 });
-const PORT = process.env.PORT || 5003;
+const PORT = process.env.PORT || 5009;
 
 const app = express();
 app.use(express.json());
