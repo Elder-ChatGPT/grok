@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Style5.css'; // Import external CSS file
-
+import config from './config';
 const About5 = () => {
   const [newScores, setNewScores] = useState([]);
   const [oldScores, setOldScores] = useState([]);
@@ -13,7 +13,7 @@ const About5 = () => {
     if (!userID) {
       navigate('/about'); // Redirect if not logged in
     } else {
-      axios.get(`https://sledssback.elderchatgpt.com./view-scores/${userID}`)
+      axios.get(`  ${config.backendUrl}/view-scores/${userID}`)
         .then(response => {
           const scores = response.data;
           

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
 import { useNavigate } from "react-router-dom";
-
+import config from './config';
 const Literacyscore = () => {
   const [literacyScore, setLiteracyScore] = useState(null);
   const [literacyCategory, setLiteracyCategory] = useState("");
@@ -20,7 +20,7 @@ const Literacyscore = () => {
           return;
         }
 
-        const response = await axios.get(`https://sledssback.elderchatgpt.com./api/learn-scale/${userId}`);
+        const response = await axios.get(`  ${config.backendUrl}/api/learn-scale/${userId}`);
         setLiteracyScore(response.data.score);
         setLiteracyCategory(getLiteracyLabel(response.data.score));
       } catch (err) {

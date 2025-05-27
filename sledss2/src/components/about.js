@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import config from './config';
 const About = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ const About = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://sledssback.elderchatgpt.com./login', { email });
+      const response = await axios.post(`${config.backendUrl}/login`, { email });
       localStorage.setItem('token', response.data.token); // Store JWT token
       localStorage.setItem('userID', response.data.userID); // Store userID for score tracking
       alert('Login successful');

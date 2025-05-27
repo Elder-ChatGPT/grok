@@ -6,7 +6,7 @@ import weightImage from "./images/old1.png";
 import chairImage from "./images/old2.png";
 import stressImage from "./images/old3.png";
 import neuroImage from "./images/old4.png";
-
+import config from './config';
 const TOTAL_STEPS = 5;
 
 const MnaTest = () => {
@@ -35,7 +35,7 @@ const MnaTest = () => {
     if (!userID) return;
 
     try {
-      await axios.post("https://sledssback.elderchatgpt.com./api/mna-test", {
+      await axios.post(` ${config.backendUrl}/api/mna-test`, {
         userID,
         answers,
       });

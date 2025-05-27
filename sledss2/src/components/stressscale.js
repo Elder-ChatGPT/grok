@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import config from './config';
 const StressScale = ({ onNext, onBack }) => {
   const [responses, setResponses] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,7 +62,7 @@ const StressScale = ({ onNext, onBack }) => {
       return;
     }
     try {
-      await axios.post("https://sledssback.elderchatgpt.com./api/stress-scale", {
+      await axios.post(`  ${config.backendUrl}/api/stress-scale`, {
         userId,
         responses,
       });

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ProgressBar from './bar';
 import { useNavigate } from 'react-router-dom';
 import './Socialtest.css';
-
+import config from './config';
 const questions = [
   [
     { question: "How many relatives do you see or hear from at least once a month?", options: [0, 1, 2, '3-4', '5-8', '9+'] },
@@ -68,7 +68,7 @@ const Socialtest = () => {
       const submission = { userId, answers: formattedAnswers };
 
       try {
-        const response = await fetch('https://sledssback.elderchatgpt.com./social', {
+        const response = await fetch(` ${config.backendUrl}/social`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(submission),

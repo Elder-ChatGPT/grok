@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
 import { useNavigate } from "react-router-dom";
-
+import config from './config';
 const Activityscore = () => {
   const [exerciseScore, setExerciseScore] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ const Activityscore = () => {
           return;
         }
 
-        const response = await axios.get(`https://sledssback.elderchatgpt.com./api/exercise-score/${userId}`);
+        const response = await axios.get(`  ${config.backendUrl}/api/exercise-score/${userId}`);
         setExerciseScore(response.data.score);
       } catch (err) {
         setError(err.response?.data?.error || "Network error. Check your connection.");

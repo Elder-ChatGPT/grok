@@ -1,6 +1,6 @@
 import React from "react";
 import image from "./images/ruben9.png";
-import image1 from "./images/ruben10.png";
+import image1 from "./images/SLEDSS Healthy Lifestyles.jpg";
 import logo from "./images/cape1.png";
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -82,7 +82,8 @@ const getLinkStyle = (linkKey, baseColor) => ({
           Kin-Keepers guides you through healthier lifestyle choices to boost your brain health. We start by assessing your current habits in six key areas: Socialization, Learning, Exercise, Diet, Sleep, and Stress (S.L.E.D.S.S.). Next, Kin-Keepers' SmartCoach provides guidance and tracks your progress toward healthier habits. Start your evaluations by clicking on the link below. 
           </p>
           <button style={evaluationButtonStyle} onClick={handleEvaluationClick}>
-            Start Evaluations
+                                    Start HERE
+to Complete your Lifestyle Assessments
           </button>
           <img src={image1} alt="pic" style={circleImageStyle} />
           
@@ -192,7 +193,7 @@ const paragraphStyle = {
 const evaluationButtonStyle = {
   marginTop: '20px',
   padding: '10px 20px',
-  backgroundColor: '#83A322',
+  backgroundColor: '#c45508',
   color: 'white',
   border: 'none',
   borderRadius: '5px',

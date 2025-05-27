@@ -3,7 +3,7 @@ const { CohereClientV2 } = require('cohere-ai');
 const cors = require('cors');
 
 const app = express();
-const PORT = 5009;
+const PORT = 5003;
 
 app.use(express.json());
 app.use(cors());

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import config from './config';
 
 const Activity = ({ onNext, onBack }) => {
   
@@ -152,7 +152,7 @@ const Activity = ({ onNext, onBack }) => {
       return;
     }
     try {
-      await axios.post("https://sledssback.elderchatgpt.com./api/exercise-scale", {
+      await axios.post(`  ${config.backendUrl}/api/exercise-scale`, {
         userId,
         responses,
       });

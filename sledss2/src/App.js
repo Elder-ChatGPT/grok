@@ -5,7 +5,6 @@ import About from "./components/about";
 import Contact from "./components/contact";
 import Page1 from "./components/page1";
 import logo from "./images/cape.png";
-import About1 from "./components/about1";
 import About2 from "./components/about2";
 import About3 from "./components/about3";
 import About4 from "./components/about4";
@@ -68,9 +67,10 @@ const App = () => {
 
           <div style={{ position: "relative" }}>
             
-            <span style={linkStyle} onClick={toggleDropdown}>
-              Get Started
-            </span>
+          <span style={{ ...linkStyle, color: "white" }} onClick={toggleDropdown}>
+  Services
+</span>
+
             {demoDropdown && (
               <div style={dropdownStyle} onMouseLeave={closeDropdown}>
                 <Link
@@ -127,7 +127,6 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/register" element={<Page1 />} />
           <Route path="/logout" element={<Logout />} />
-          <Route path="/about1" element={<ProtectedRoute><About1 /></ProtectedRoute>} />
           <Route path="/about2" element={<ProtectedRoute><About2 /></ProtectedRoute>} />
           <Route path="/about3" element={<ProtectedRoute><About3 /></ProtectedRoute>} />
           <Route path="/about4" element={<ProtectedRoute><About4 /></ProtectedRoute>} />

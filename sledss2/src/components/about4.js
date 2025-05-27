@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Style4.css'; // Import external CSS file
-
+import config from './config';
 const About4 = () => {
   const [criteria, setCriteria] = useState('');
   const [advice, setAdvice] = useState('');
@@ -18,7 +18,7 @@ const About4 = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://sledssback.elderchatgpt.com./get-advice', {
+      const response = await axios.post(`  ${config.backendUrl}/get-advice`, {
         userID,
         criteria,
       });
@@ -49,17 +49,7 @@ const About4 = () => {
           <p className="criteria-description">Get advice based on your personal data.</p>
         </div>
 
-        <div className={`criteria-box ${criteria === 'LikeMe' ? 'selected' : ''}`} onClick={() => setCriteria('LikeMe')}>
-          <input
-            type="radio"
-            value="LikeMe"
-            checked={criteria === 'LikeMe'}
-            onChange={() => setCriteria('LikeMe')}
-            className="radio-input"
-          />
-          <label className="radio-label">LikeMe</label>
-          <p className="criteria-description">Receive advice based on people with similar characteristics like you.</p>
-        </div>
+       
       </div>
 
       <div className="button-container">

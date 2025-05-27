@@ -2,20 +2,22 @@ const express = require('express');
 const neo4j = require('neo4j-driver');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = '1234'; // Change this to a secure secret
+const SECRET_KEY = process.env.SECRET_KEY;
 const { CohereClientV2 } = require('cohere-ai');
 const cohere = new CohereClientV2({
-  token: '9StJFlYibvYlkScu4P2PXOYTl5xEr4Ye6L70mwc3', // Replace with your actual Cohere API Key
+ token: process.env.COHERE_API_KEY, // Replace with your actual Cohere API Key
 });
+const PORT = process.env.PORT || 5003;
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 const driver = neo4j.driver(
-  'neo4j://184.168.29.119:7687', // Change if using a different port
-  neo4j.auth.basic('neo4j','ooglobeneo4j') // Use your Neo4j credentials
+  process.env.NEO4J_URI, // Change if using a different port
+   neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD) // Use your Neo4j credentials
 );
 const session = driver.session();
 
@@ -1083,5 +1085,5 @@ app.post('/chat', async (req, res) => {
 
 
 // Start server
-app.listen(5009, () => console.log('Server running on port 5009'));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 

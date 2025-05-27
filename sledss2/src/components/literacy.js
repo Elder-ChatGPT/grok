@@ -8,7 +8,7 @@ import stressImage from "./images/lit4.png";
 import neuroImage from "./images/old4.png";
 import cardImage from "./images/lit5.png";
 import classImage from "./images/lit6.png";
-
+import config from './config';
 
 const TOTAL_STEPS = 7;
 
@@ -38,7 +38,7 @@ const Literacy = () => {
     if (!userID) return;
 
     try {
-      await axios.post("https://sledssback.elderchatgpt.com./api/learn-scale", {
+      await axios.post(`  ${config.backendUrl}/api/learn-scale`, {
         userID,
         answers,
       });

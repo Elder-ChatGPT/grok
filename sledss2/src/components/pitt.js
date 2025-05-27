@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import config from './config';
 const PITT = ({ onNext, onBack }) => {
   
   const [responses, setResponses] = useState({});
@@ -114,7 +114,7 @@ const PITT = ({ onNext, onBack }) => {
       return;
     }
     try {
-      await axios.post("https://sledssback.elderchatgpt.com./api/sleep-scale", {
+      await axios.post(` ${config.backendUrl}/api/sleep-scale`, {
         userId,
         responses,
       });

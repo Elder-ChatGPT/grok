@@ -46,7 +46,7 @@ const Login = () => {
     setError(null);
     setResponse('');
     try {
-      const res = await fetch('https://sledssback.elderchatgpt.com./chat', {
+      const res = await fetch('  ${config.backendUrl}/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

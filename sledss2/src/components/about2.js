@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import config from './config';
 export const About2 = ({ token }) => {
   const [prompt, setPrompt] = useState("");
   const [conversation, setConversation] = useState([]);
@@ -18,7 +18,7 @@ export const About2 = ({ token }) => {
 
     try {
       const response = await axios.post(
-        "https://sledssback.elderchatgpt.com./api/ai-advice",
+        `  ${config.backendUrl}/api/ai-advice`,
         { prompt },
         { headers: { Authorization: token } }
       );

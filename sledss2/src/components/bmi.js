@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import config from './config';
 const BmiEvaluation = () => {
   const navigate = useNavigate();
   const [feet, setFeet] = useState("0");
@@ -40,7 +40,7 @@ const BmiEvaluation = () => {
       }
 
       try {
-        const response = await axios.post("https://sledssback.elderchatgpt.com./api/save-bmi", {
+        const response = await axios.post(`  ${config.backendUrl}/api/save-bmi`, {
           userID,
           bmi: bmiValue,
           category

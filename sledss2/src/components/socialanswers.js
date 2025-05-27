@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
-
+import config from './config';
 const SocialAnswers = () => {
     const [score, setScore] = useState(null);
     const navigate = useNavigate();
@@ -13,7 +13,7 @@ const SocialAnswers = () => {
             if (!userId) return;
 
             try {
-                const response = await axios.get(`https://sledssback.elderchatgpt.com./social-score/${userId}`);
+                const response = await axios.get(`  ${config.backendUrl}/social-score/${userId}`);
                 setScore(response.data.score);
             } catch (error) {
                 console.error('Error fetching loneliness score:', error);
