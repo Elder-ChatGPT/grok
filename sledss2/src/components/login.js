@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Style6.css';
-
+import config from './config';
 const forums = {
   Socialization: [
     "How can I improve my social interactions?",
@@ -46,7 +46,7 @@ const Login = () => {
     setError(null);
     setResponse('');
     try {
-      const res = await fetch('  ${config.backendUrl}/chat', {
+      const res = await fetch(` ${config.backendUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
