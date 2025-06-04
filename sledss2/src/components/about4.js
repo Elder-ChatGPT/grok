@@ -1,72 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './Style4.css'; // Import external CSS file
+import { FaUser, FaUsers, FaLightbulb } from 'react-icons/fa';
+import './Style4.css';
 import config from './config';
+
 const About4 = () => {
   const [criteria, setCriteria] = useState('');
   const [advice, setAdvice] = useState('');
   const [loading, setLoading] = useState(false);
-  const userID = localStorage.getItem('userID'); // Get logged-in user ID
-  const navigate = useNavigate();
+  const userID = localStorage.getItem('userID');
 
-  const handleGetAdvice = async () => {
-    if (!criteria) {
-      alert('Please select a criteria.');
-      return;
+  useEffect(() => {
+    if (criteria) {
+      fetchAdvice(criteria);
     }
+  }, [criteria]);
 
+  const fetchAdvice = async (selectedCriteria) => {
     setLoading(true);
-    try {
-      const response = await axios.post(`  ${config.backendUrl}/get-advice`, {
-        userID,
-        criteria,
-      });
+    setAdvice('');
 
+    try {
+      const response = await axios.post(`${config.backendUrl}/get-advice`, {
+        userID,
+        criteria: selectedCriteria,
+      });
       setAdvice(response.data.advice);
     } catch (error) {
       console.error('Error fetching advice:', error);
-      setAdvice('Failed to fetch advice. Please try again.');
+      setAdvice('⚠️ Oops! Something went wrong. Please try again.');
     }
+
     setLoading(false);
+  };
+
+  const renderAdvice = (text) => {
+    const points = text.split(/\n|•|- /).filter(Boolean);
+    return (
+      <div className="advice-list">
+        {points.map((point, index) => (
+          <div key={index} className="advice-point">
+            <FaLightbulb className="advice-icon" />
+            <span>{point.trim()}</span>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
     <div className="container">
-      <h2 className="title">Get Personalized Advice</h2>
-      <p className="criteria-description">Please select a criteria inorder to receive personalized advice.</p>
+      <h2 className="title">🌱 Your Personalized Wellbeing Advice</h2>
+      <p className="subtitle">Select how you'd like your advice tailored</p>
 
-      <div className="criteria-container">
-        <div className={`criteria-box ${criteria === 'Anyone' ? 'selected' : ''}`} onClick={() => setCriteria('Anyone')}>
-          <input
-            type="radio"
-            value="Anyone"
-            checked={criteria === 'Anyone'}
-            onChange={() => setCriteria('Anyone')}
-            className="radio-input"
-          />
-          <label className="radio-label">Anyone</label>
-          <p className="criteria-description">Get advice based on your personal data.</p>
+      <div className="criteria-grid">
+        <div
+          className={`card ${criteria === 'Anyone' ? 'active' : ''}`}
+          onClick={() => setCriteria('Anyone')}
+        >
+          <FaUser size={40} className="card-icon" />
+          <h3>General Wellness</h3>
+          <p>Tips for overall lifestyle and self-care.</p>
         </div>
 
-       
-      </div>
-
-      <div className="button-container">
-        <button onClick={handleGetAdvice} disabled={loading} className="advice-button">
-          {loading ? 'Fetching Advice...' : 'Get Advice'}
-        </button>
-      </div>
-
-      {advice && (
-        <div className="advice-container">
-        <div className="advice-text">
-          <strong>Your Personalized Advice</strong>
-          <div >{advice}</div>
+        <div
+          className={`card ${criteria === 'LikeMe' ? 'active' : ''}`}
+          onClick={() => setCriteria('LikeMe')}
+        >
+          <FaUsers size={40} className="card-icon" />
+          <h3>People Like Me</h3>
+          <p>Insights based on individuals with similar habits and goals.</p>
         </div>
+      </div>
+
+      {loading && (
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p>Fetching your personalized recommendations...</p>
         </div>
       )}
 
+      {advice && !loading && (
+        <div className="advice-container">
+          <h4 className="advice-header">🧠 Smart Suggestions Just for You</h4>
+          {renderAdvice(advice)}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,0 +1,113 @@
+.eval-container {
+  padding: 40px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  background: linear-gradient(to bottom right, #f7fafd, #eaf2f6);
+  min-height: 100vh;
+}
+
+.eval-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #0E5580;
+  margin-bottom: 10px;
+}
+
+.eval-subtitle {
+  font-size: 24px;
+  color: #555;
+  margin-bottom: 40px;
+}
+
+.eval-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 900px;
+  margin: 0 auto 40px;
+}
+
+.eval-card {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 8px 18px rgba(0, 85, 128, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.eval-card:hover {
+  transform: translateY(-6px);
+}
+
+.eval-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+.eval-content {
+  padding: 20px;
+}
+
+.eval-button {
+  width: 100%;
+  padding: 12px 0;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.eval-button:hover {
+  opacity: 0.9;
+}
+
+.eval-date {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #666;
+}
+
+.eval-advice-button {
+  background-color: #0E5580;
+  color: white;
+  padding: 14px 32px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.eval-advice-button:hover {
+  background-color: #093d5d;
+}
+
+/* 🧠 Responsive: On small screens, go to 1 column */
+@media (max-width: 900px) {
+  .eval-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .eval-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .eval-title {
+    font-size: 28px;
+  }
+
+  .eval-advice-button {
+    font-size: 16px;
+    padding: 12px 24px;
+  }
+}
+
+

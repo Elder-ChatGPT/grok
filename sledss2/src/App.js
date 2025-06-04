@@ -35,40 +35,59 @@ import Literacyscore from "./components/literacyscore";
 
 const App = () => {
   const [demoDropdown, setDemoDropdown] = useState(false);
-  const [activeLink, setActiveLink] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState("home");
 
-  const toggleDropdown = () => {
-    setDemoDropdown(!demoDropdown);
-  };
-
-  const closeDropdown = () => {
-    setDemoDropdown(false);
-  };
-
+  const toggleDropdown = () => setDemoDropdown(!demoDropdown);
+  const closeDropdown = () => setDemoDropdown(false);
   const handleLinkClick = (link) => {
     setActiveLink(link);
     closeDropdown();
+    setMobileMenuOpen(false);
   };
 
   return (
     <Router>
       <div style={menuStyle}>
-    <Link to="/">
-        <img src={logo} alt="Logo" style={logoStyle} />
-    </Link>
-    <Link to="/" style={{ ...welcomeStyle, textDecoration: 'none', cursor: 'pointer' }}>
-  Healthy Lifestyle Choices
-</Link>
+        <Link to="/" onClick={() => handleLinkClick("home")}>
+          <img src={logo} alt="Logo" style={logoStyle} />
+        </Link>
 
-        <div style={menuLinksStyle}>
-          <Logout />
+        <Link
+          to="/"
+          style={{
+            ...welcomeStyle,
+            textDecoration: 'none',
+            color: activeLink === "home" ? "#FFD700" : "gold",
+          }}
+          onMouseEnter={(e) => e.target.style.color = "#FFD700"}
+          onMouseLeave={(e) => e.target.style.color = activeLink === "home" ? "#FFD700" : "gold"}
+        >
+          Healthy Lifestyle Choices
+        </Link>
 
-          <Link style={linkStyle} to="/">Home</Link>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={hamburgerStyle}
+        >
+          ☰
+        </button>
 
-          <div style={{ position: "relative" }}>
+       <div style={{ display: "flex", alignItems: "center", gap: "40px" }}>
+  <Link
+    to="/"
+    style={{
+      ...linkStyle,
+      color: activeLink === "home" ? "#FFD700" : "white",
+    }}
+    onClick={() => handleLinkClick("home")}
+  >
+    Home
+  </Link>
+ <div style={{ position: "relative" }}>
             
           <span style={{ ...linkStyle, color: "white" }} onClick={toggleDropdown}>
-  Services
+  My Wellness  Tools
 </span>
 
             {demoDropdown && (
@@ -89,7 +108,7 @@ const App = () => {
                     e.target.style.color = "#1E3A5F";
                   }}
                 >
-                  General-Services
+                  General Services
                 </Link>
                 <Link
                   style={{
@@ -107,16 +126,32 @@ const App = () => {
                     e.target.style.color = "#1E3A5F";
                   }}
                 >
-                  My-Services
+                  My Personalized Plan
                 </Link>
               </div>
-            )}
+  )}
+</div>
+
+  
+
+
+
+
+  <div style={logoutStyle}>
+    <Logout />
+  </div>
+</div>
+
+
+        {/* Mobile menu dropdown */}
+        {mobileMenuOpen && (
+          <div style={mobileDropdownStyle}>
+            <Link to="/" onClick={() => handleLinkClick("home")} style={linkStyle}>Home</Link>
+            <Link to="/login" onClick={() => handleLinkClick("general")} style={linkStyle}>General Services</Link>
+            <Link to="/evaluations" onClick={() => handleLinkClick("personal")} style={linkStyle}>My Personalized Plan</Link>
+            <Link to="/contact" onClick={() => handleLinkClick("contact")} style={linkStyle}>Contact</Link>
           </div>
-          
-          <Link style={linkStyle} to="/about"></Link>
-          <Link style={linkStyle} to="/evaluation"></Link>
-          <Link style={linkStyle} to="/evaluation"></Link>
-        </div>
+        )}
       </div>
 
       <div style={{ marginTop: "80px" }}>
@@ -157,8 +192,10 @@ const App = () => {
   );
 };
 
+// 🌈 STYLES
+
 const menuStyle = {
-  backgroundColor: "#0E5580",
+  background: "linear-gradient(to right, #0e5580, #0e5580)",
   height: "80px",
   display: "flex",
   alignItems: "center",
@@ -174,15 +211,23 @@ const menuStyle = {
 
 const logoStyle = {
   height: "80px",
-  marginRight: "-1px",
 };
 
 const welcomeStyle = {
-  fontSize: "24px",
+  fontSize: "26px",
   fontWeight: "bold",
-  color: "gold",
   textAlign: "left",
   flexGrow: 1,
+  transition: "color 0.3s",
+};
+
+const hamburgerStyle = {
+  background: "none",
+  border: "none",
+  fontSize: "30px",
+  color: "white",
+  cursor: "pointer",
+  display: "none",
 };
 
 const menuLinksStyle = {
@@ -195,9 +240,11 @@ const menuLinksStyle = {
 const linkStyle = {
   color: "white",
   textDecoration: "none",
-  fontSize: "18px",
+  fontSize: "20px",
   marginLeft: "40px",
   cursor: "pointer",
+  fontWeight: "500",
+  transition: "color 0.3s",
 };
 
 const dropdownStyle = {
@@ -208,7 +255,8 @@ const dropdownStyle = {
   padding: "10px 0",
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
   zIndex: 1001,
-  width: "180px",
+  width: "200px",
+  animation: "fadeIn 0.3s ease-in-out",
 };
 
 const dropdownLinkStyle = {
@@ -216,16 +264,41 @@ const dropdownLinkStyle = {
   padding: "12px 20px",
   color: "#1E3A5F",
   textDecoration: "none",
-  fontSize: "16px",
+  fontSize: "18px",
   textAlign: "center",
-  transition: "background-color 0.2s ease-in-out",
+  transition: "all 0.2s ease-in-out",
   cursor: "pointer",
+  backgroundColor: "transparent",
 };
 
 const activeDropdownLinkStyle = {
-  ...dropdownLinkStyle,
-  backgroundColor: "#0E5580",
+  backgroundColor: " #0e5580",
+  color: "white",
+  fontWeight: "bold",
+};
+
+const mobileDropdownStyle = {
+  position: "absolute",
+  top: "80px",
+  left: 0,
+  width: "100%",
+  backgroundColor: "#003f5c",
+  zIndex: 999,
+  padding: "20px",
+  display: "flex",
+  flexDirection: "column",
+};
+
+
+const logoutStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  marginLeft: "80px",
+  fontSize: "20px",
+  cursor: "pointer",
   color: "white",
 };
+
 
 export default App;

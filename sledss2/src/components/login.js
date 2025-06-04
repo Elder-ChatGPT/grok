@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Style6.css';
 import config from './config';
+
 const forums = {
   Socialization: [
     "How can I improve my social interactions?",
@@ -46,18 +47,15 @@ const Login = () => {
     setError(null);
     setResponse('');
     try {
-      const res = await fetch(` ${config.backendUrl}/chat`, {
+      const res = await fetch(`${config.backendUrl}/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: msg }),
       });
-      if (!res.ok) {
-        throw new Error('Failed to fetch response');
-      }
+      if (!res.ok) throw new Error('Failed to fetch response');
       const data = await res.json();
       setResponse(data);
+      setMessage('');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -68,56 +66,57 @@ const Login = () => {
   return (
     <div className="chat-wrapper">
       <header className="chat-header">
-        <h2>Health Recommendations</h2>
-        <h3>NB: For personalized advice, please log in.</h3>
+        <h2>🌿 Healthy Life Assistant</h2>
+        <p>Ask questions or select a topic below to get AI-powered lifestyle advice.</p>
       </header>
-      <div className="chat-content">
-        <aside className="forum-sidebar">
-          <h3>Predefined Questions</h3>
-          {Object.entries(forums).map(([forum, questions]) => (
-            <div key={forum} className="forum-group">
-              <h4>{forum}</h4>
+
+      <div className="chat-layout">
+        <aside className="question-sidebar">
+          <h3>💡 Ask by Topic</h3>
+          {Object.entries(forums).map(([title, questions]) => (
+            <div className="category-block" key={title}>
+              <h4 className="category-title">{title}</h4>
               {questions.map((q, index) => (
-                <button
-                  key={index}
-                  className="forum-question"
-                  onClick={() => sendMessage(q)}
-                >
+                <button className="question-btn" key={index} onClick={() => sendMessage(q)}>
                   {q}
                 </button>
               ))}
             </div>
           ))}
         </aside>
+
         <main className="chat-main">
-          <div className="chat-conversation">
-            {loading ? (
-              <div className="generating-message">Generating response...</div>
-            ) : response ? (
-              <div className="ai-response">
-                <strong>Recommendations:</strong>
-                <p>{response}</p>
-              </div>
-            ) : (
-              <p className="placeholder-text">Your conversation will appear here...</p>
-            )}
-            {error && <p className="error-message">Error: {error}</p>}
-          </div>
-          <div className="chat-input-area">
+          <div className="ask-input">
             <textarea
               className="chat-input"
               rows="3"
+              placeholder="Type your question here..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Or type your question here..."
-            ></textarea>
+            />
             <button
-              className="chat-button"
+              className="chat-send"
               onClick={() => sendMessage(message)}
               disabled={loading}
             >
-              Send
+              {loading ? 'Sending...' : 'Send'}
             </button>
+          </div>
+
+          <div className="chat-box">
+            {loading && <div className="loading-msg">⏳ Generating recommendations...</div>}
+            {!loading && response && (
+              <div className="ai-response">
+                <strong>AI Recommendation:</strong>
+                <p>{response}</p>
+              </div>
+            )}
+            {!response && !loading && (
+              <div className="empty-state">
+                🧘 Your response will appear here. Select a question or type your own!
+              </div>
+            )}
+            {error && <div className="error-msg">❌ {error}</div>}
           </div>
         </main>
       </div>
@@ -126,4 +125,3 @@ const Login = () => {
 };
 
 export default Login;
-
