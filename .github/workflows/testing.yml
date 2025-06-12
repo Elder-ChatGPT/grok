@@ -3,7 +3,7 @@ name: Deploy to Testing Server
 on:
   push:
     branches:
-      - development
+      - testing
 
 jobs:
   deploy:
