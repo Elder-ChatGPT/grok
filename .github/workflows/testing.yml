@@ -1,0 +1,25 @@
+name: Deploy to Testing Server
+
+on:
+  push:
+    branches:
+      - testing
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run deployment script on testing server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.DEV_SERVER_PASSWORD }}
+          port: 22
+          script: |
+            cd /home/ooglobe/scripts
+            ./deploy_sledss_.sh
