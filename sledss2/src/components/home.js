@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import heroImg from "./images/ruben9.png";
 import lifestyleImg from "./images/SLEDSS Healthy Lifestyles.jpg";
@@ -12,6 +12,7 @@ const useUserId = () => {
 };
 
 const Home = () => {
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const navigate = useNavigate();
   const userId = useUserId();
 
@@ -19,9 +20,21 @@ const Home = () => {
     if (userId) localStorage.setItem("userID", userId);
   }, [userId]);
 
+  useEffect(() => {
+    const img = new Image();
+    img.src = require("./images/pexel.png"); // Preload background image
+    img.onload = () => setBackgroundLoaded(true);
+  }, []);
+
+
   const handleEvaluationClick = () => {
     navigate("/evaluations");
   };
+
+    if (!backgroundLoaded) {
+    return <div style={{ height: "100vh", backgroundColor: "#f9fdfc" }} />;
+  }
+
 
   return (
     <div className="home-root">
@@ -34,7 +47,7 @@ const Home = () => {
         Your journey to a healthier mind and lifestyle starts here.
       </p>
       <button className="hero-button" onClick={handleEvaluationClick}>
-        Start Lifestyle Assessment
+        Start Lifestyle Assessment Here
       </button>
     </div>
   </div>

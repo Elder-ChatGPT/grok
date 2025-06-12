@@ -16,11 +16,17 @@
 .hero {
   position: relative;
   height: 100vh;
-  background: url('./images/pexel.png') no-repeat center center / cover;
+  width: 100%;
+  background-image: url('./images/pexel.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed; /* optional for parallax feel */
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 
 .hero-overlay {
   position: absolute;
@@ -65,9 +71,13 @@
 }
 
 .hero-button:hover {
-  background-color: #e25b00;
+  
+  background-color: #1ED690;
+
   transform: translateY(-3px);
 }
+
+
 
 /* STEPS */
 .steps-section {
