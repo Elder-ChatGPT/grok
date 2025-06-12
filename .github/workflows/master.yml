@@ -22,4 +22,4 @@ jobs:
           port: 22
           script: |
             cd /home/ooglobe/scripts
-            ./deploy.sh
+            ./deploy_sledss.sh
