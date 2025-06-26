@@ -34,9 +34,21 @@
   margin-top: -20px;
 }
 
+.score-label {
+  font-size: 20px;
+  color: #0e5580;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
 .error-text {
   font-size: 24px;
   color: red;
+}
+
+.score-loading {
+  font-size: 20px;
+  color: #888;
 }
 
 .legend {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import './Evaluations.css';
 import SocializationImg from './images/socialize.jpeg';
-import LearningImg from './images/learning.jpeg';
+import LearningImg from './images/learningss.jpeg';
 import ExerciseImg from './images/exercise.jpeg';
 import DietImg from './images/diet.jpeg';
 import StressImg from './images/stress.jpeg';

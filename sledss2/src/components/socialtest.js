@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import ProgressBar from './bar';
 import { useNavigate } from 'react-router-dom';
+import config from './config'; 
 import './Socialtest.css';
-import config from './config';
+
 const questions = [
   [
     { question: "How many relatives do you see or hear from at least once a month?", options: [0, 1, 2, '3-4', '5-8', '9+'] },
@@ -30,7 +31,7 @@ const questions = [
   ]
 ];
 
-const Socialtest = () => {
+function Socialtest() {
   const [answers, setAnswers] = useState(() => Array.from({ length: questions.length }, () => []));
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
@@ -51,7 +52,9 @@ const Socialtest = () => {
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 0) {
+    if (currentPage === 0) {
+      navigate("/socialization");
+    } else {
       setCurrentPage(currentPage - 1);
     }
   };
@@ -77,14 +80,14 @@ const Socialtest = () => {
         if (response.ok) {
           alert('Answers submitted successfully!');
           const storedCompletedTests = JSON.parse(localStorage.getItem('completedTests')) || {};
-          const completionDate = new Date().toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit' 
+          const completionDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
           });
 
-          storedCompletedTests[userId] = { 
-            ...(storedCompletedTests[userId] || {}), 
+          storedCompletedTests[userId] = {
+            ...(storedCompletedTests[userId] || {}),
             Socialize: { completedAt: completionDate }
           };
           localStorage.setItem('completedTests', JSON.stringify(storedCompletedTests));
@@ -101,7 +104,7 @@ const Socialtest = () => {
   const totalQuestions = questions.flat().length;
   const answeredQuestions = answers.flat().filter(isAnswered).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
-  const currentCategory = currentPage <= 2 ? 'Family-Based Questions' : 'Friendship-Based Questions';
+  const currentCategory = currentPage <= 2 ? '👨‍👩‍👧‍👦 Family-Based Questions' : '👯‍♀️ Friendship-Based Questions';
 
   return (
     <div className="socialtest-container">
@@ -109,30 +112,38 @@ const Socialtest = () => {
       <ProgressBar progress={progress} />
       <h2 className="category">{currentCategory}</h2>
 
-      {questions[currentPage].map((q, index) => (
-        <div key={index} className="question-row">
-          <div className="question-container">
-            <span className="question">{q.question}</span>
+      {questions[currentPage].map((q, index) => {
+        return (
+          <div key={index} className="question-row">
+            <div className="question">{q.question}</div>
+            <div className="options-container">
+              {q.options.map(option => {
+                const isSelected = answers[currentPage][index] === option;
+                return (
+                  <label
+                    key={option}
+                    className={`option-wrapper ${isSelected ? 'selected' : ''}`}
+                    onClick={() => handleAnswer(index, option)}
+                  >
+                    <input
+                      type="radio"
+                      name={`question-${currentPage}-${index}`}
+                      value={option}
+                      checked={isSelected}
+                      readOnly
+                    />
+                    <span className="scale-text">{option}</span>
+                    {isSelected && <span className="check-icon">✅</span>}
+                  </label>
+                );
+              })}
+            </div>
           </div>
-          <div className="options-container">
-            {q.options.map(option => (
-              <label key={option} className="option-wrapper">
-                <span className="scale-text">{option}</span>
-                <input
-                  type="radio"
-                  name={`question-${currentPage}-${index}`}
-                  value={option}
-                  checked={answers[currentPage][index] === option}
-                  onChange={() => handleAnswer(index, option)}
-                />
-              </label>
-            ))}
-          </div>
-        </div>
-      ))}
+        );
+      })}
 
       <div className="navigation-buttons">
-        {currentPage > 0 && <button className="prev-button" onClick={handlePrevPage}>Previous</button>}
+        <button className="prev-button" onClick={handlePrevPage}>Back</button>
         {currentPage < questions.length - 1 && isPageCompleted() && (
           <button className="next-button" onClick={handleNextPage}>Next</button>
         )}
@@ -142,8 +153,6 @@ const Socialtest = () => {
       </div>
     </div>
   );
-};
-
-
+}
 
 export default Socialtest;
