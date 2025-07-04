@@ -1,0 +1,101 @@
+/* activityscore.css */
+
+.activity-score-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #f4f9fc, #ffffff);
+  padding: 40px 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.score-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.score-title {
+  font-size: 30px;
+  color: #1e466c;
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+
+.score-value {
+  font-size: 38px;
+  font-weight: bold;
+  color: #00b894;
+  margin-top: -10px;
+}
+
+.activity-label {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2ecf80;
+  margin-top: 10px;
+  font-style: italic;
+  transition: all 0.3s ease;
+}
+
+.loading {
+  font-size: 20px;
+  color: #1e466c;
+}
+
+.error-text {
+  font-size: 24px;
+  color: red;
+  font-weight: bold;
+}
+
+.legend {
+  margin-top: 30px;
+  font-size: 18px;
+  color: #444;
+  text-align: left;
+  padding: 20px;
+  background-color: #f5fcff;
+  border-radius: 12px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+.legend div {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.legend span {
+  font-weight: 600;
+  color: #1e466c;
+}
+
+.back-button {
+  margin-top: 30px;
+  padding: 14px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 50px;
+  background-color: #2ecf80;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, transform 0.2s;
+}
+
+.back-button:hover {
+  background-color: #25aa66;
+  transform: scale(1.03);
+}

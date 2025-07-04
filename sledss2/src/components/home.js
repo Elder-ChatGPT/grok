@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import heroImg from "./images/ruben9.png";
 import lifestyleImg from "./images/SLEDSS Healthy Lifestyles.jpg";
 import logo from "./images/cape1.png";
 import "./Home.css";
+import heroBg from "./images/pexel.png";
+
 
 const useUserId = () => {
   const location = useLocation();
@@ -12,7 +14,6 @@ const useUserId = () => {
 };
 
 const Home = () => {
-  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const navigate = useNavigate();
   const userId = useUserId();
 
@@ -20,26 +21,20 @@ const Home = () => {
     if (userId) localStorage.setItem("userID", userId);
   }, [userId]);
 
-  useEffect(() => {
-    const img = new Image();
-    img.src = require("./images/pexel.png"); // Preload background image
-    img.onload = () => setBackgroundLoaded(true);
-  }, []);
-
-
   const handleEvaluationClick = () => {
     navigate("/evaluations");
   };
 
-    if (!backgroundLoaded) {
-    return <div style={{ height: "100vh", backgroundColor: "#f9fdfc" }} />;
-  }
-
-
   return (
     <div className="home-root">
-      {/* HERO SECTION */}
-   <section className="hero">
+     <section className="hero">
+  <img
+    src={heroBg}
+    alt="Hero background"
+    className="hero-bg"
+    loading="eager"
+    fetchpriority="high"
+  />
   <div className="hero-overlay">
     <div className="hero-content">
       <h1 className="hero-title">Welcome to S.L.E.D.S.S</h1>
@@ -52,7 +47,6 @@ const Home = () => {
     </div>
   </div>
 </section>
-
 
 
       {/* HOW IT WORKS */}
@@ -83,11 +77,15 @@ const Home = () => {
         <div className="service-options">
           <div className="service-tile">
             <h3>🧭 General Services</h3>
-            <p><Link to="/login">Explore healthy living tips</Link> without signing in.</p>
+            <p>
+              <Link to="/login">Explore healthy living tips</Link> without signing in.
+            </p>
           </div>
           <div className="service-tile">
             <h3>🔐 My Services</h3>
-            <p><Link to="/evaluations">Get personalized coaching</Link> after registering.</p>
+            <p>
+              <Link to="/evaluations">Get personalized coaching</Link> after registering.
+            </p>
           </div>
         </div>
       </section>
@@ -96,14 +94,18 @@ const Home = () => {
       <section className="info-section">
         <h2 className="section-heading">Why It Matters</h2>
         <p>
-          Research shows that stress, sleep, diet, and inactivity can contribute to memory loss.
-          But healthy habits can protect and even improve brain function.
+          Research shows that stress, sleep, diet, and inactivity can contribute to memory loss. But healthy habits can protect and even improve brain function.
         </p>
         <div className="research-citations">
           <p><strong>Dr. Rudolph Tanzi</strong> – Harvard Medical School</p>
           <p><strong>Dr. Dean Ornish</strong> – Preventive Medicine Research Institute</p>
         </div>
-        <img src={lifestyleImg} className="info-image" alt="Healthy lifestyle" />
+        <img
+          src={lifestyleImg}
+          className="info-image"
+          alt="Healthy lifestyle"
+          loading="lazy"
+        />
       </section>
 
       {/* FOOTER */}
@@ -114,9 +116,20 @@ const Home = () => {
         </div>
         <div className="footer-links">
           <a href="/">Home</a>
-           <a href="https://familycircle.elderchatgpt.com/" target="_blank" rel="noopener noreferrer">Family-Circle</a>
-          <a href="https://elderchatgpt.com/memorytest/" target="_blank" rel="noopener noreferrer">ElderCHAT</a>
-
+          <a
+            href="https://familycircle.elderchatgpt.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Family-Circle
+          </a>
+          <a
+            href="https://elderchatgpt.com/memorytest/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ElderCHAT
+          </a>
         </div>
       </footer>
     </div>
@@ -124,5 +137,4 @@ const Home = () => {
 };
 
 export default Home;
-
 
