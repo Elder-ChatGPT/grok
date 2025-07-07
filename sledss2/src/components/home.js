@@ -4,7 +4,7 @@ import heroImg from "./images/ruben9.png";
 import lifestyleImg from "./images/SLEDSS Healthy Lifestyles.jpg";
 import logo from "./images/cape1.png";
 import "./Home.css";
-import heroBg from "./images/pexel.png";
+import heroBg from "./images/pexel.webp";
 
 
 const useUserId = () => {
