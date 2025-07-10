@@ -1,10 +1,12 @@
-.social-answers-container {
+/* activityscore.css */
+
+.activity-score-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to right, #e8f5f9, #ffffff);
+  background: linear-gradient(to right, #f4f9fc, #ffffff);
   padding: 40px 20px;
   font-family: 'Segoe UI', sans-serif;
 }
@@ -17,26 +19,43 @@
   width: 100%;
   max-width: 600px;
   text-align: center;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .score-title {
   font-size: 30px;
-  color: #0e5580;
+  color: #1e466c;
   margin-bottom: 30px;
   font-weight: 700;
 }
 
 .score-value {
-  font-size: 40px;
+  font-size: 38px;
   font-weight: bold;
   color: #00b894;
-  margin-top: -20px;
+  margin-top: -10px;
+}
+
+.activity-label {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2ecf80;
+  margin-top: 10px;
+  font-style: italic;
+  transition: all 0.3s ease;
+}
+
+.loading {
+  font-size: 20px;
+  color: #1e466c;
 }
 
 .error-text {
   font-size: 24px;
   color: red;
+  font-weight: bold;
 }
 
 .legend {
@@ -48,6 +67,7 @@
   background-color: #f5fcff;
   border-radius: 12px;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+  width: 100%;
 }
 
 .legend div {
@@ -63,18 +83,19 @@
 }
 
 .back-button {
-  margin-top: 40px;
+  margin-top: 30px;
   padding: 14px 30px;
   font-size: 18px;
   border: none;
   border-radius: 50px;
-  background-color: #0e5580;
+  background-color: #2ecf80;
   color: white;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s;
 }
 
 .back-button:hover {
-  background-color: #093a5e;
+  background-color: #25aa66;
+  transform: scale(1.03);
 }

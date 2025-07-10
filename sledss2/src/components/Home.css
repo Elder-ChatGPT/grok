@@ -1,30 +1,35 @@
-/* GLOBAL */
 .home-root {
   font-family: "Segoe UI", sans-serif;
   color: #1f3b4d;
   background-color: #f9fdfc;
-  width: 100vw;            /* Full viewport width */
+  width: 100vw;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;      /* Prevent horizontal scroll */
+  overflow-x: hidden;
   scroll-behavior: smooth;
-  font-size: 30px;
+  font-size: 20px;
 }
-
 
 /* HERO SECTION */
 .hero {
   position: relative;
   height: 100vh;
   width: 100%;
-  background-image: url('./images/pexel.png');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  background-attachment: fixed; /* optional for parallax feel */
+  background-color: #f9fdfc;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
 }
 
 
@@ -34,7 +39,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4); /* Optional dark overlay for contrast */
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,52 +51,48 @@
   text-align: center;
   max-width: 700px;
   padding: 2rem;
-  animation: fadeInUp 1s ease forwards;
+  animation: fadeInUp 0.6s ease forwards;
 }
 
 .hero-title {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2.2rem, 5.5vw, 3.2rem);
   margin-bottom: 1rem;
 }
 
 .hero-subtitle {
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(1.2rem, 2.8vw, 1.6rem);
   margin-bottom: 1.5rem;
 }
 
 .hero-button {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   background: #ff6600;
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 12px 30px;
+  padding: 14px 34px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
 }
 
 .hero-button:hover {
-  
-  background-color: #1ED690;
-
+  background-color: #1ed690;
   transform: translateY(-3px);
 }
-
-
 
 /* STEPS */
 .steps-section {
   text-align: center;
   padding: 50px 20px;
   background: #ffffff;
-  animation: fadeInUp 1s ease;
+  animation: fadeInUp 0.6s ease;
+  font-size: 20px;
 }
 
 .section-heading {
-  font-size: 2rem;
+  font-size: 26px;
   color: #0e5580;
-  margin-bottom: 20px;
-    font-size: 24px;
+  margin-bottom: 24px;
 }
 
 .steps-container {
@@ -104,13 +105,13 @@
 .step-card {
   background: #f4fcff;
   border-radius: 15px;
-  padding: 20px;
-  width: 250px;
+  padding: 22px;
+  width: 260px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
   cursor: pointer;
-    font-size: 24px;
+  font-size: 20px;
 }
 
 .step-card:hover {
@@ -122,22 +123,22 @@
   background: #02678e;
   color: white;
   font-size: 1.4rem;
-  width: 35px;
-  height: 35px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-    font-size: 24px;
 }
 
 /* SERVICES */
 .services-section {
-  padding: 40px 20px;
+  padding: 50px 20px;
   background-color: #eef9f1;
   text-align: center;
-  animation: fadeInUp 1s ease;
+  animation: fadeInUp 0.6s ease;
+  font-size: 20px;
 }
 
 .service-options {
@@ -149,14 +150,14 @@
 
 .service-tile {
   background: white;
-  padding: 25px;
+  padding: 28px;
   border-radius: 10px;
-  width: 300px;
+  width: 310px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-    font-size: 24px;
+  font-size: 20px;
 }
 
 .service-tile:hover {
@@ -168,14 +169,14 @@
   color: #02678e;
   margin-bottom: 10px;
   transition: color 0.3s ease;
-    font-size: 24px;
+  font-size: 24px;
 }
 
 .service-tile a {
   color: #ff6600;
   font-weight: bold;
+  font-size: 20px;
   transition: color 0.3s ease;
-    font-size: 24px;
 }
 
 .service-tile a:hover {
@@ -184,20 +185,21 @@
 
 /* INFO SECTION */
 .info-section {
-  padding: 40px 20px;
+  padding: 50px 20px;
   background-color: #f0f8e6;
   text-align: center;
-  animation: fadeInUp 1s ease;
- font-size: 24px;
+  animation: fadeInUp 0.6s ease;
+  font-size: 20px;
 }
 
 .research-citations {
-  margin-top: 10px;
+  margin-top: 15px;
   font-style: italic;
+  font-size: 18px;
 }
 
 .info-image {
-  margin-top: 20px;
+  margin-top: 25px;
   max-width: 600px;
   width: 100%;
   height: auto;
@@ -219,7 +221,7 @@
   justify-content: space-between;
   align-items: center;
   animation: fadeIn 1s ease;
- font-size: 24px;
+  font-size: 20px;
 }
 
 .footer-brand {
@@ -242,7 +244,7 @@
 .footer-links a {
   color: white;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 20px;
   transition: color 0.3s ease;
 }
 
@@ -279,25 +281,6 @@
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-  .step-card,
-  .service-tile {
-    width: 45%;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero {
-    height: 80vh;
-    background-position: center;
-  }
-
-  .hero-content {
-    padding: 1rem;
-  }
-}
-
-
 /* ANIMATIONS */
 @keyframes fadeInUp {
   from {
@@ -318,5 +301,6 @@
     opacity: 1;
   }
 }
+
 
 

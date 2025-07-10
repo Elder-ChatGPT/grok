@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import './Evaluations.css';
-import SocializationImg from './images/sp.png';
-import LearningImg from './images/Lp.png';
-import ExerciseImg from './images/ep.png';
-import DietImg from './images/dp.png';
-import StressImg from './images/stp.png';
-import SleepImg from './images/Slp.png';
+import SocializationImg from './images/socialize.jpeg';
+import LearningImg from './images/learningss.jpeg';
+import ExerciseImg from './images/exercise.jpeg';
+import DietImg from './images/diet.jpeg';
+import StressImg from './images/stress.jpeg';
+import SleepImg from './images/sleep.jpeg';
 
 const Evaluations = () => {
   const navigate = useNavigate();
