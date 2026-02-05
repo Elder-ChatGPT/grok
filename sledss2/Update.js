@@ -5,8 +5,8 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (!userID) {
-      // Redirect to home page (works for both production and testing)
-      window.location.replace("/");
+      // Redirect to registration service
+      window.location.replace("http://elderchatgpt.com:5018/");
     }
   }, [userID]);
 
