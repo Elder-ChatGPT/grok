@@ -22,5 +22,6 @@ jobs:
           port: 22
           script: |
             cd /home/ooglobe/scripts
+            sed -i 's/\r$//' deploy_sledss_prod.sh
             chmod +x deploy_sledss_prod.sh
             ./deploy_sledss_prod.sh
