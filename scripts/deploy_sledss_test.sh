@@ -4,23 +4,28 @@
 
 echo "Starting SLEDSS TEST deployment..."
 
-cd /var/www/grok-test
-git reset --hard HEAD
-git clean -fd
-
-echo "Switching to testing branch..."
-git fetch origin
-git checkout testing
-git reset --hard origin/testing
-git clean -fd
+# Clone repo if it doesn't exist yet
+if [ ! -d /var/www/grok-test/.git ]; then
+    echo "Cloning grok repo to /var/www/grok-test..."
+    sudo mkdir -p /var/www/grok-test
+    sudo chown -R $USER:$USER /var/www/grok-test
+    git clone --branch testing --single-branch https://github.com/Elder-ChatGPT/grok.git /var/www/grok-test
+else
+    cd /var/www/grok-test
+    git fetch origin
+    git checkout testing
+    git reset --hard origin/testing
+    git clean -fd
+fi
 
 echo "Pulled latest code from testing branch."
+cd /var/www/grok-test
 git status
 
 # Load NVM and activate Node
 export NVM_DIR="$HOME/.nvm"
 source "$NVM_DIR/nvm.sh"
-nvm use 22
+nvm use 22 || nvm install 22
 
 # ===== Backend Deployment =====
 echo "Deploying Backend..."

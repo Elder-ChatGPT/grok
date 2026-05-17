@@ -4,23 +4,28 @@
 
 echo "Starting SLEDSS PRODUCTION deployment..."
 
-cd /var/www/grok-prod
-git reset --hard HEAD
-git clean -fd
-
-echo "Switching to master branch..."
-git fetch origin
-git checkout master
-git reset --hard origin/master
-git clean -fd
+# Clone repo if it doesn't exist yet
+if [ ! -d /var/www/grok-prod/.git ]; then
+    echo "Cloning grok repo to /var/www/grok-prod..."
+    sudo mkdir -p /var/www/grok-prod
+    sudo chown -R $USER:$USER /var/www/grok-prod
+    git clone --branch master --single-branch https://github.com/Elder-ChatGPT/grok.git /var/www/grok-prod
+else
+    cd /var/www/grok-prod
+    git fetch origin
+    git checkout master
+    git reset --hard origin/master
+    git clean -fd
+fi
 
 echo "Pulled latest code from master branch."
+cd /var/www/grok-prod
 git status
 
 # Load NVM and activate Node
 export NVM_DIR="$HOME/.nvm"
 source "$NVM_DIR/nvm.sh"
-nvm use 22
+nvm use 22 || nvm install 22
 
 # ===== Backend Deployment =====
 echo "Deploying Backend..."
