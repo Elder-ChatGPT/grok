@@ -21,7 +21,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           script: |
-            cd /home/ooglobe/scripts
-            sed -i 's/\r$//' deploy_sledss_test.sh
-            chmod +x deploy_sledss_test.sh
-            ./deploy_sledss_test.sh
+            sed -i 's/\r$//' /home/ooglobe/scripts/deploy_sledss_test.sh
+            chmod +x /home/ooglobe/scripts/deploy_sledss_test.sh
+            bash /home/ooglobe/scripts/deploy_sledss_test.sh
