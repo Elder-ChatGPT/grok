@@ -27,6 +27,15 @@ export NVM_DIR="$HOME/.nvm"
 source "$NVM_DIR/nvm.sh"
 nvm use 22 || nvm install 22
 
+# Write backend .env
+cat > /var/www/grok-prod/back/.env << 'ENVEOF'
+SECRET_KEY=123456
+PORT=5009
+NEO4J_URI=neo4j://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=ooglobeneo4j
+ENVEOF
+
 # ===== Backend Deployment =====
 echo "Deploying Backend..."
 cd /var/www/grok-prod/back
