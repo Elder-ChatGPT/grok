@@ -121,7 +121,7 @@ COHERE_API_KEY=your_cohere_api_key
 ### Deployment Checklist
 
 - [ ] Set all environment variables on production server
-- [ ] Remove hardcoded API keys (check cohere.js)
+- [x] Remove obsolete files containing hardcoded API keys (the exposed key must still be revoked)
 - [ ] Configure CORS to restrict origins in production
 - [ ] Set up HTTPS/SSL certificates
 - [ ] Configure reverse proxy (nginx/Apache)
@@ -134,7 +134,7 @@ COHERE_API_KEY=your_cohere_api_key
 
 ⚠️ **IMPORTANT**: Never commit `.env` files to version control!
 
-1. Remove hardcoded API key in `back/cohere.js` (line 11)
+1. Revoke the previously exposed Cohere API key and configure a new key in `back/.env`
 2. Use environment variables for all sensitive data
 3. Enable CORS only for specific origins in production
 4. Use HTTPS in production
@@ -145,8 +145,10 @@ COHERE_API_KEY=your_cohere_api_key
 ```
 grok/
 ├── back/                   # Backend (Express.js)
-│   ├── server.js          # Main server file (1090 lines - needs refactoring)
-│   ├── cohere.js          # Cohere AI integration
+│   ├── server.js          # Main API entry point
+│   ├── auth.js            # Secure authentication routes
+│   ├── sensor-routes.js   # Sensor ingestion routes
+│   └── wellness-engine.js # Signal interpretation engine
 │   ├── package.json
 │   └── .env.example
 ├── sledss2/               # Frontend (React)
