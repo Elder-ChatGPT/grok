@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const neo4j = require('neo4j-driver');
 const cors = require('cors');
 require('dotenv').config();
@@ -858,7 +858,7 @@ The learning scale is  Strong Cognitive Function: 8â€“10
  Potential Cognitive Concerns: 0â€“5 . Use the given scales to and meanings to  understand and give the users score a meaning.Remove the percentages from the display.`;
 
       const response = await cohere.chat({
-        model: 'command-r-plus',
+        model: 'command-a-03-2025',
         messages: [{ role: 'user', content: prompt }]
       });
 
@@ -940,7 +940,7 @@ The learning scale is  Strong Cognitive Function: 8â€“10
         prompt += `\nGenerate personalized advice ONLY for the following forums attempted by the user: ${attemptedForums.join(', ')}. Start each forum's advice with the forum name and a short interpretation of the score. Omit unattempted forums.Here is the scale of the different forums. `;
     
         const response = await cohere.chat({
-          model: 'command-r-plus',
+          model: 'command-a-03-2025',
           messages: [{ role: 'user', content: prompt }]
         });
     
@@ -976,7 +976,7 @@ The learning scale is  Strong Cognitive Function: 8â€“10
         avgPrompt += `\nGenerate advice ONLY for these forums. Mention the forum and a short interpretation of the score. Do not include unattempted forums.`;
     
         const response = await cohere.chat({
-          model: 'command-r-plus',
+          model: 'command-a-03-2025',
           messages: [{ role: 'user', content: avgPrompt }]
         });
     
@@ -1014,7 +1014,7 @@ app.post('/chat', async (req, res) => {
     
     // Call Cohere's chat API with the provided message (question)
     const response = await cohere.chat({
-      model: 'command-r-plus',
+      model: 'command-a-03-2025',
       messages: [{ role: 'user', content: message }],
     });
     
