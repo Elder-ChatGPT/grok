@@ -1,9 +1,7 @@
 const express = require('express');
 const neo4j = require('neo4j-driver');
-const bcrypt = require('bcrypt');
 const cors = require('cors');
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.SECRET_KEY;
 const { CohereClientV2 } = require('cohere-ai');
 const cohere = new CohereClientV2({
@@ -14,68 +12,20 @@ const PORT = process.env.PORT || 5009;
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use('/api/sensors', require('./sensor-routes')());
+app.use('/api/advice', require('./advice-routes').createAdviceRouter({ cohere }));
 
 const driver = neo4j.driver(
   process.env.NEO4J_URI, // Change if using a different port
    neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD) // Use your Neo4j credentials
 );
 const session = driver.session();
+app.use('/api/auth', require('./auth').createAuthRouter({ driver, secret: SECRET_KEY }));
 
 // User Registration Route
-app.post('/register', async (req, res) => {
-  const { email, password, age, gender } = req.body;
-
-  if (!email || !password || !age || !gender) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Store user in Neo4j
-    await session.run(
-      `CREATE (u:Person {userID: randomUUID(), email: $email, password: $password, age: $age, gender: $gender})`,
-      { email, password: hashedPassword, age, gender }
-    );
-
-    res.json({ message: 'Registration successful' });
-  } catch (error) {
-    console.error('Error registering user:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-
-// User Login Route
-app.post('/login', async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
-  }
-
-  try {
-    // Find user in Neo4j
-    const result = await session.run(
-      `MATCH (u:Person {email: $email}) RETURN u.userID AS userID`,
-      { email }
-    );
-
-    if (result.records.length === 0) {
-      return res.status(401).json({ error: 'User not found' });
-    }
-
-    const userID = result.records[0].get('userID');
-
-    // Generate JWT token
-    const token = jwt.sign({ userID }, SECRET_KEY, { expiresIn: '1h' });
-
-    res.json({ message: 'Login successful', token, userID });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// Compatibility endpoints for older mobile/web clients.
+app.post('/register', (req, res) => res.status(410).json({ error: 'Update the app to use /api/auth/register' }));
+app.post('/login', (req, res) => res.status(410).json({ error: 'Update the app to use /api/auth/login' }));
 
 
 
@@ -195,7 +145,7 @@ app.post('/api/save-bmi', async (req, res) => {
     console.log("Received request:", { userID, bmi, category }); // Log received data
 
     if (!userID || !bmi || !category) {
-      console.error("❌ Backend error: Missing required parameters", { userID, bmi, category });
+      console.error("âŒ Backend error: Missing required parameters", { userID, bmi, category });
       return res.status(400).json({ message: "Missing required parameters" });
     }
 
@@ -210,15 +160,15 @@ app.post('/api/save-bmi', async (req, res) => {
     session.close();
 
     if (result.records.length === 0) {
-      console.error("❌ Backend error: User not found");
+      console.error("âŒ Backend error: User not found");
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("✅ BMI saved successfully!");
+    console.log("âœ… BMI saved successfully!");
     return res.status(200).json({ message: "BMI saved successfully!" });
 
   } catch (error) {
-    console.error("❌ Backend error:", error);
+    console.error("âŒ Backend error:", error);
     return res.status(500).json({ message: "Server error. Please try again later." });
   }
 });
@@ -589,7 +539,7 @@ function calculateExerciseScore(responses) {
     }
   });
 
-  // Normalize: Higher activity = lower totalPoints → invert
+  // Normalize: Higher activity = lower totalPoints â†’ invert
   const score = 350 - Math.round((totalPoints / maxPoints) * 350);
   return Math.max(0, Math.min(score, 350));
 }
@@ -879,13 +829,13 @@ At Risk: 8-11
 
  Malnourished: 0-7 . 
 
- The stress scale is  Low Stress: 0–13
+ The stress scale is  Low Stress: 0â€“13
 
  Moderate Stress: 14-26
 
  High Stress: 27-40 .
 
-  The sleep scale is  Good Sleep: 0–5
+  The sleep scale is  Good Sleep: 0â€“5
 
  Moderate Sleep: 6-10
 
@@ -893,19 +843,19 @@ At Risk: 8-11
 
 Very Severe Sleep: 16-21 . 
 
-The exercise scale is  Very Low Activity: 0–50
+The exercise scale is  Very Low Activity: 0â€“50
 
- Low to Moderate Activity: 51–150
+ Low to Moderate Activity: 51â€“150
 
- Moderate to Active: 151–250
+ Moderate to Active: 151â€“250
 
-Highly Active: 251–350. 
+Highly Active: 251â€“350. 
 
-The learning scale is  Strong Cognitive Function: 8–10
+The learning scale is  Strong Cognitive Function: 8â€“10
 
- Mild Cognitive Changes: 6–7
+ Mild Cognitive Changes: 6â€“7
 
- Potential Cognitive Concerns: 0–5 . Use the given scales to and meanings to  understand and give the users score a meaning.Remove the percentages from the display.`;
+ Potential Cognitive Concerns: 0â€“5 . Use the given scales to and meanings to  understand and give the users score a meaning.Remove the percentages from the display.`;
 
       const response = await cohere.chat({
         model: 'command-a-03-2025',
@@ -1086,4 +1036,5 @@ app.post('/chat', async (req, res) => {
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 

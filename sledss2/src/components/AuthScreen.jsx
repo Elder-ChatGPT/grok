@@ -1,0 +1,30 @@
+import { useState } from "react";
+import { ArrowRight, Check, Eye, EyeOff, HeartPulse, Leaf, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
+import { login, register } from "../api/auth";
+
+export default function AuthScreen({ onAuthenticated, onDemo }) {
+  const [mode,setMode]=useState("login"); const [show,setShow]=useState(false); const [busy,setBusy]=useState(false); const [message,setMessage]=useState(""); const [remember,setRemember]=useState(true);
+  const [form,setForm]=useState({firstName:"",email:"",password:"",yearOfBirth:"",gender:"prefer-not-to-say",consent:false});
+  const update=(key,value)=>setForm({...form,[key]:value});
+  const changeMode=next=>{setMode(next);setMessage("");setShow(false)};
+  async function submit(event){
+    event.preventDefault(); setMessage("");
+    if(mode==="register"&&!form.consent){setMessage("Please accept the privacy terms to continue.");return}
+    setBusy(true);
+    try {
+      if(mode==="register"){await register(form);setMode("login");setMessage("Account created. Sign in with your new password.");}
+      else onAuthenticated(await login({email:form.email,password:form.password}),remember);
+    } catch(error){setMessage(error.message)} finally{setBusy(false)}
+  }
+  const passwordReady=form.password.length>=8&&/[A-Za-z]/.test(form.password)&&/\d/.test(form.password);
+  return <main className="auth-page"><section className="auth-story"><div className="auth-brand"><span><Leaf/></span><strong>SLEDSS</strong></div><div className="auth-promise"><span className="live-pill"><i/> YOUR WHOLE HEALTH</span><h1>Live well.<br/>Age boldly.</h1><p>One calm place for your health signals, assessments and next best action.</p><ul><li><Check/>Understand what your readings mean</li><li><Check/>Get guidance built from the complete picture</li><li><Check/>Share only what you choose</li></ul></div><div className="auth-trust"><ShieldCheck/><span><strong>Privacy by design</strong>Your health data stays under your control.</span></div></section>
+    <section className="auth-form-side"><div className="auth-form-card"><div className="auth-mobile-brand"><Leaf/><strong>SLEDSS</strong></div><span className="eyebrow">{mode==="login"?"WELCOME BACK":"CREATE YOUR ACCOUNT"}</span><h2>{mode==="login"?"Sign in to your wellbeing":"Begin your SLEDSS journey"}</h2><p>{mode==="login"?"Your personalised health picture is waiting.":"A few details help us make guidance relevant to you."}</p>
+      <div className="auth-tabs" role="tablist" aria-label="Account access"><button role="tab" aria-selected={mode==="login"} className={mode==="login"?"active":""} onClick={()=>changeMode("login")}>Sign in</button><button role="tab" aria-selected={mode==="register"} className={mode==="register"?"active":""} onClick={()=>changeMode("register")}>Create account</button></div>
+      <form onSubmit={submit}>{mode==="register"&&<><label>First name<input autoComplete="given-name" value={form.firstName} onChange={e=>update("firstName",e.target.value)} required placeholder="How should we address you?"/></label><div className="auth-row"><label>Year of birth<input type="number" min="1906" max={new Date().getFullYear()-18} value={form.yearOfBirth} onChange={e=>update("yearOfBirth",e.target.value)} required placeholder="1958"/></label><label>Gender<select value={form.gender} onChange={e=>update("gender",e.target.value)}><option value="prefer-not-to-say">Prefer not to say</option><option value="female">Female</option><option value="male">Male</option><option value="other">Another identity</option></select></label></div></>}
+        <label>Email address<input type="email" inputMode="email" autoCapitalize="none" autoComplete="email" value={form.email} onChange={e=>update("email",e.target.value)} required placeholder="you@example.com"/></label><label>Password<div className="password-input"><LockKeyhole/><input type={show?"text":"password"} autoComplete={mode==="login"?"current-password":"new-password"} minLength="8" value={form.password} onChange={e=>update("password",e.target.value)} required placeholder={mode==="login"?"Enter your password":"8+ characters, including a number"}/><button type="button" onClick={()=>setShow(!show)} aria-label={show?"Hide password":"Show password"}>{show?<EyeOff/>:<Eye/>}</button></div></label>
+        {mode==="register"&&form.password&&<div className="password-strength" aria-live="polite"><div><i className={form.password.length>=8?"met":""}/><i className={/[A-Za-z]/.test(form.password)?"met":""}/><i className={/\d/.test(form.password)?"met":""}/></div><span>{passwordReady?"Password meets the requirements":"Use 8+ characters, a letter and a number"}</span></div>}
+        {mode==="login"?<div className="auth-options"><label><input type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)}/>Keep me signed in</label><button type="button" onClick={()=>setMessage("Password recovery is coming soon. Please contact SLEDSS support for account access.")}>Forgot password?</button></div>:<label className="consent"><input type="checkbox" checked={form.consent} onChange={e=>update("consent",e.target.checked)}/><span>I agree to SLEDSS processing my data to provide personalised wellness guidance. I can withdraw consent at any time.</span></label>}
+        {message&&<div className={`auth-message ${message.startsWith("Account created")?"success":""}`} role="alert">{message}</div>}<button className="auth-submit" disabled={busy} aria-busy={busy}>{busy?<><span className="button-spinner"/>Please wait…</>:<>{mode==="login"?"Sign in securely":"Create my account"}<ArrowRight/></>}</button></form>
+      <div className="auth-divider"><span>or</span></div><button className="demo-button" onClick={onDemo}><Sparkles/>Explore the demonstration</button><p className="demo-note">No account required. Demonstration data only.</p>
+    </div><div className="auth-security"><HeartPulse/><span>Wellness support, not emergency monitoring</span></div></section></main>;
+}
