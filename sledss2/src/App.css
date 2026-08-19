@@ -20,6 +20,12 @@
 section[id]{scroll-margin-top:96px}
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes popover-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Shared brand artwork */
+.brand{min-width:250px}
+.brand-mark{width:64px;height:42px;border-radius:9px;object-fit:contain;display:block;transform:none;background:none}
+.auth-brand-logo{width:74px;height:48px;border-radius:10px;object-fit:contain;display:block}
+.auth-mobile-brand img{width:58px;height:38px;border-radius:8px;object-fit:contain;display:block}
 @media(max-width:760px){.header-popover{position:fixed;top:62px;right:12px;width:min(300px,calc(100vw - 24px))}.toast{bottom:18px}.signal-value strong{font-size:25px}.assessment-card p{font-size:12px}}
 
 /* Validated assessment experience */

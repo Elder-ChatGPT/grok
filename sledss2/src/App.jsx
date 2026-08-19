@@ -2,7 +2,7 @@
 import {
   Activity, ArrowRight, BatteryMedium, Bell, Brain, CalendarDays,
   Check, ChevronRight, CircleHelp, Clock3, Footprints, HeartPulse, Home,
-  Leaf, LogOut, Menu, MoonStar, MoreHorizontal, PlugZap, Salad, Settings, ShieldCheck,
+  LogOut, Menu, MoonStar, MoreHorizontal, PlugZap, Salad, Settings, ShieldCheck,
   Sparkles, Stethoscope, SunMedium, UserRound, Users, Watch, Wifi, X
 } from "lucide-react";
 import "./App.css";
@@ -17,7 +17,7 @@ import { clearSession, getMe, saveSession, savedSession } from "./api/auth";
 const iconMap = { activity: Footprints, sleep: MoonStar, stress: Brain, nutrition: Salad, social: Users, heart: HeartPulse };
 
 function Brand() {
-  return <div className="brand"><div className="brand-mark"><Leaf size={21} strokeWidth={2.4} /></div><div><strong>SLEDSS</strong><span>Live well. Age boldly.</span></div></div>;
+  return <div className="brand"><img className="brand-mark" src="/logo.ico" alt="" aria-hidden="true" /><div><strong>SLEDSS</strong><span>Live well. Age boldly.</span></div></div>;
 }
 
 function Header({ onMenu, user, onLogout, onNotify }) {
