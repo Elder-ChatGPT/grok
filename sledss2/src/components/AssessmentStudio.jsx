@@ -73,20 +73,25 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
   const [remaining, setRemaining] = useState(30);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const closeRef = useRef(null);
+  const onCloseRef = useRef(onClose);
   const resultNarratedRef = useRef(false);
   const result = useMemo(() => stage === "result" ? (existing || scoreAssessment(assessment.id, answers)) : null, [stage, existing, assessment.id, answers]);
   const question = assessment.questions[step];
   const total = assessment.questions.length;
 
   useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
     closeRef.current?.focus();
-    const key = event => event.key === "Escape" && onClose();
+    const key = event => event.key === "Escape" && onCloseRef.current();
     window.addEventListener("keydown", key);
     return () => {
       window.removeEventListener("keydown", key);
       stopSpeech();
     };
-  }, [onClose]);
+  }, []);
 
   useEffect(() => {
     if (!voiceEnabled || stage === "intro") return;
