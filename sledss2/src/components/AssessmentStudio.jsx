@@ -6,17 +6,46 @@ function Progress({ current, total }) {
   return <div className="assessment-progress" aria-label={`Step ${current} of ${total}`}><span style={{ width: `${current / total * 100}%` }} /></div>;
 }
 
-function formatTime(seconds) {
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+let activeSpeechRun = 0;
+let activeUtterance = null;
+
+function stopSpeech() {
+  activeSpeechRun += 1;
+  activeUtterance = null;
+  window.speechSynthesis?.cancel();
 }
 
 function speak(text) {
   if (!("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.82;
-  utterance.pitch = 1;
-  window.speechSynthesis.speak(utterance);
+  stopSpeech();
+  const run = activeSpeechRun;
+  const sentences = String(text).match(/[^.!?]+[.!?]?/g) || [String(text)];
+  const chunks = sentences.reduce((parts, sentence) => {
+    const clean = sentence.trim();
+    if (!clean) return parts;
+    const last = parts[parts.length - 1];
+    if (last && `${last} ${clean}`.length <= 180) parts[parts.length - 1] = `${last} ${clean}`;
+    else parts.push(clean);
+    return parts;
+  }, []);
+  const play = index => {
+    if (run !== activeSpeechRun || index >= chunks.length) {
+      activeUtterance = null;
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(chunks[index]);
+    activeUtterance = utterance;
+    utterance.rate = 0.82;
+    utterance.pitch = 1;
+    utterance.onend = () => {
+      if (run === activeSpeechRun && activeUtterance === utterance) play(index + 1);
+    };
+    utterance.onerror = () => {
+      if (run === activeSpeechRun && activeUtterance === utterance) activeUtterance = null;
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+  play(0);
 }
 
 function questionNarration(question) {
@@ -41,9 +70,10 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
   const [memorySeen, setMemorySeen] = useState(false);
   const [chairPhase, setChairPhase] = useState("ready");
   const [countdown, setCountdown] = useState(3);
-  const [remaining, setRemaining] = useState(90);
+  const [remaining, setRemaining] = useState(30);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const closeRef = useRef(null);
+  const resultNarratedRef = useRef(false);
   const result = useMemo(() => stage === "result" ? (existing || scoreAssessment(assessment.id, answers)) : null, [stage, existing, assessment.id, answers]);
   const question = assessment.questions[step];
   const total = assessment.questions.length;
@@ -54,7 +84,7 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
     window.addEventListener("keydown", key);
     return () => {
       window.removeEventListener("keydown", key);
-      window.speechSynthesis?.cancel();
+      stopSpeech();
     };
   }, [onClose]);
 
@@ -65,7 +95,8 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
         speak(`Memory step. Learn these three words. ${assessment.memoryWords.join(". ")}. Repeat all three aloud. They will be hidden on the next screen.`);
       } else if (stage === "questions") {
         speak(questionNarration(question));
-      } else if (stage === "result" && result) {
+      } else if (stage === "result" && result && !resultNarratedRef.current) {
+        resultNarratedRef.current = true;
         speak(`Your screening result is: ${result.label}. ${result.summary}. Your next best step: ${result.action}`);
       }
     }, 250);
@@ -80,7 +111,7 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
       else {
         speak("Go");
         setChairPhase("running");
-        setRemaining(90);
+        setRemaining(30);
       }
     }, 1000);
     return () => clearTimeout(timer);
@@ -92,8 +123,6 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
       setRemaining(value => {
         if (value > 1) {
           const next = value - 1;
-          if (next === 60) speak("One minute remaining");
-          if (next === 30) speak("Thirty seconds remaining");
           if (next === 10) speak("Ten seconds remaining");
           return next;
         }
@@ -143,14 +172,15 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
     setMemorySeen(false);
     setChairPhase("ready");
     setCountdown(3);
-    setRemaining(90);
+    setRemaining(30);
+    resultNarratedRef.current = false;
     setStage("intro");
   }
 
   function startChairTest() {
-    setAnswers(current => ({ ...current, stands: { count: 0, usedArms: false, stopped: false, completed: false } }));
+    setAnswers(current => ({ ...current, stands: { count: 0, usedArms: false, stopped: false, completed: false, halfwayAdded: false } }));
     setCountdown(3);
-    setRemaining(90);
+    setRemaining(30);
     setChairPhase("countdown");
   }
 
@@ -166,7 +196,7 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
 
   function toggleVoice() {
     setVoiceEnabled(current => {
-      if (current) window.speechSynthesis?.cancel();
+      if (current) stopSpeech();
       return !current;
     });
   }
@@ -245,10 +275,10 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
 
         {question.type === "chairStand" && <div className="chair-test">
           <div className={`chair-clock ${chairPhase}`}>
-            {chairPhase === "ready" && <><strong>1:30</strong><span>minutes</span></>}
+            {chairPhase === "ready" && <><strong>30</strong><span>seconds</span></>}
             {chairPhase === "countdown" && <><strong>{countdown}</strong><span>Get ready</span></>}
-            {chairPhase === "running" && <><strong>{formatTime(remaining)}</strong><span>minutes left</span></>}
-            {chairPhase === "complete" && <><Check /><strong>Stop</strong><span>1 minute 30 seconds complete</span></>}
+            {chairPhase === "running" && <><strong>{remaining}</strong><span>seconds left</span></>}
+            {chairPhase === "complete" && <><Check /><strong>Stop</strong><span>30 seconds complete</span></>}
             {chairPhase === "stopped" && <><Square /><strong>Stopped</strong><span>Safety first</span></>}
           </div>
           {chairPhase === "ready" && <button className="start-test-button" onClick={startChairTest}>Start automatic countdown</button>}
@@ -259,8 +289,9 @@ export default function AssessmentStudio({ assessment, existing, onClose, onComp
           </div>}
           {chairPhase === "running" && <button className="stop-test-button" onClick={stopChairTest}><Square /> Stop now for safety</button>}
           {standResultReady && <div className="chair-checks">
+            {chairPhase === "complete" && !answer?.halfwayAdded && <button onClick={() => setAnswers(current => ({ ...current, stands: { ...current.stands, count: Number(current.stands?.count || 0) + 1, halfwayAdded: true } }))}>At “Stop,” I was more than halfway up—add one stand</button>}
             <label><input type="checkbox" checked={Boolean(answer?.usedArms)} onChange={event => setAnswers(current => ({ ...current, stands: { ...current.stands, usedArms: event.target.checked } }))} /> I used my hands or arms to stand</label>
-            <small>Arm use will be recorded so the result is not mistaken for an unsupported chair-stand performance.</small>
+            <small>If arms were used, the official protocol records a score of zero.</small>
           </div>}
         </div>}
 

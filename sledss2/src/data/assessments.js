@@ -7,6 +7,8 @@ export const frequencyOptions = [
   { label: "All of the time", detail: "Every day or almost every day", value: 5 }
 ];
 
+const ageBands = ["60–64", "65–69", "70–74", "75–79", "80–84", "85–89", "90–94"];
+
 export const assessmentCatalog = [
   {
     id: "who5", title: "Mental well-being", short: "WHO-5", time: "2 min", due: "Recommended monthly", state: "Validated", icon: "stress", tone: "purple",
@@ -37,12 +39,14 @@ export const assessmentCatalog = [
     ]
   },
   {
-    id: "mobility", title: "Mobility & strength", short: "SLEDSS 90-sec", time: "3 min", due: "Recommended every 3 months", state: "Guided endurance activity", icon: "activity", tone: "coral",
-    description: "Counts complete chair stands during a guided 1-minute 30-second activity.", source: "Setup adapted from CDC STEADI", sourceUrl: "https://www.cdc.gov/steadi/media/pdfs/steadi-assessment-30sec-508.pdf",
-    intro: "You do not need to set a timer. SLEDSS will count down and run the full 1-minute 30-second clock while a helper taps once for every complete stand. Move at a comfortable, steady pace rather than racing.", safety: true,
+    id: "mobility", title: "Mobility & strength", short: "CDC STEADI", time: "3 min", due: "Recommended every 3 months", state: "Guided test", icon: "activity", tone: "coral",
+    description: "Counts complete chair stands during a guided 30-second test.", source: "CDC STEADI", sourceUrl: "https://www.cdc.gov/steadi/media/pdfs/steadi-assessment-30sec-508.pdf",
+    intro: "You do not need to set a timer. SLEDSS will count down and run the 30-second clock while a helper taps once for every complete stand.", safety: true,
     questions: [
       { id: "safe", text: "Is it safe for you to try this test today?", help: "Use a firm, straight-backed chair without armrests. Put it against a wall. Ask another adult to stand nearby.", type: "choice", options: [{ label: "Yes, with a helper nearby", detail: "I feel steady and have no new pain or dizziness", value: 0 }, { label: "No or not sure", detail: "Skip the test and arrange supported assessment", value: 1 }] },
-      { id: "stands", text: "90-second chair-stand endurance activity", help: "Sit in the middle of the chair, feet flat, arms crossed at your chest. Stand fully upright, then sit fully. Keep a comfortable pace. Your helper taps once after each complete stand. Stop immediately for pain, dizziness, unusual breathlessness or unsteadiness.", type: "chairStand" }
+      { id: "ageBand", text: "Choose your age group for the comparison.", help: "The age group is used only to select the published reference range.", type: "choice", options: [...ageBands.map(band => ({ label: `${band} years`, value: band })), { label: "Outside these ages / prefer no comparison", value: "none" }] },
+      { id: "referenceSex", text: "Which published reference column should be used?", help: "The CDC table reports separate columns labelled women and men. This choice is only for that reference comparison.", type: "choice", options: [{ label: "Women’s reference", value: "women" }, { label: "Men’s reference", value: "men" }, { label: "Record my count without comparison", value: "none" }] },
+      { id: "stands", text: "30-second chair stand", help: "Sit in the middle of the chair, feet flat, arms crossed at your chest. Stand fully upright, then sit fully. Your helper taps once after each complete stand. Stop immediately for pain, dizziness, unusual breathlessness or unsteadiness.", type: "chairStand" }
     ]
   },
   {
@@ -56,6 +60,11 @@ export const assessmentCatalog = [
     ]
   }
 ];
+
+const chairStandMinimums = {
+  "60–64": { men: 14, women: 12 }, "65–69": { men: 12, women: 11 }, "70–74": { men: 12, women: 10 },
+  "75–79": { men: 11, women: 10 }, "80–84": { men: 10, women: 9 }, "85–89": { men: 8, women: 8 }, "90–94": { men: 7, women: 4 }
+};
 
 const normalise = value => String(value || "").trim().toLocaleLowerCase().replace(/[^a-z]/g, "");
 const todayLocal = () => {
@@ -79,9 +88,12 @@ export function scoreAssessment(id, answers) {
   if (id === "mobility") {
     if (Number(answers.safe) === 1) return { score: null, max: null, label: "Supported assessment advised", level: "attention", summary: "You chose not to attempt the chair-stand test. That is the right choice whenever safety is uncertain.", action: "Ask a clinician, physiotherapist or trained helper to assess strength, balance and fall risk safely." };
     const test = answers.stands || {}, count = Number(test.count || 0);
-    if (test.usedArms) return { score: count, max: null, unit: "stands with arm support", label: "Arm support was used", level: "attention", summary: `You recorded ${count} stand${count === 1 ? "" : "s"}, but hands or arms were used. The result should not be interpreted as an unsupported chair-stand performance.`, action: "Discuss leg strength, balance and fall risk with a health professional before changing exercise." };
-    if (test.stopped) return { score: count, max: null, unit: "stands before stopping", label: "Activity stopped for safety", level: "attention", summary: "The activity was stopped early. Safety is more important than completing the clock, and this count should not be compared with another result.", action: "If you had pain, dizziness, breathlessness or unsteadiness, seek appropriate clinical advice before repeating the activity." };
-    return { score: count, max: null, unit: "stands in 90 seconds", label: `${count} complete stands recorded`, level: "watch", summary: `You completed ${count} stand${count === 1 ? "" : "s"} in 1 minute 30 seconds. This longer SLEDSS activity does not use the CDC 30-second reference thresholds, so it records a personal baseline rather than a pass or fail.`, action: "Use this as your personal baseline. Share it with a health professional if standing, walking or balance has become harder." };
+    if (test.usedArms) return { score: 0, max: null, unit: "stands", label: "Arm support was needed", level: "attention", summary: "The CDC protocol records zero when the arms are used to stand. This does not diagnose weakness, but a supported review would be useful.", action: "Discuss leg strength, balance and fall risk with a health professional before changing exercise." };
+    if (test.stopped) return { score: count, max: null, unit: "stands before stopping", label: "Test stopped for safety", level: "attention", summary: "The test was stopped early, so the count should not be compared with the 30-second reference table.", action: "If you had pain, dizziness, breathlessness or unsteadiness, seek appropriate clinical advice before repeating the test." };
+    const minimum = chairStandMinimums[answers.ageBand]?.[answers.referenceSex];
+    if (!minimum) return { score: count, max: null, unit: "stands", label: `${count} complete stands recorded`, level: "watch", summary: "Your 30-second count was saved without an age- and sex-reference comparison.", action: "Share the count with a health professional if standing, walking or balance has become harder." };
+    const below = count < minimum;
+    return { score: count, max: null, unit: "stands", label: below ? "Below the CDC reference" : "At or above the CDC reference", level: below ? "attention" : "good", summary: `You completed ${count} stand${count === 1 ? "" : "s"}. The published below-average cut-off for the selected group is fewer than ${minimum}.`, action: below ? "Arrange a fuller strength, balance and fall-risk assessment with a qualified professional." : "Continue safe strength and balance activity appropriate for your health and ability." };
   }
   const recalled = Array.isArray(answers.recall) ? answers.recall.map(normalise) : [];
   const targets = ["flower", "door", "rice"];
