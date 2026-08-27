@@ -1,16 +1,8 @@
 # SLEDSS API
 
-The backend provides authentication, wellness assessments, sensor ingestion, health-signal interpretation and personalised advice.
+The backend provides authentication, sensor ingestion, calibrated signal interpretation and Cohere-powered personalised guidance.
 
-## Requirements
-
-- Node.js 20 or newer
-- A running Neo4j database
-- A Cohere API key if AI chat/advice endpoints are used
-
-## First-time setup (PowerShell)
-
-From the repository root:
+## First-time setup
 
 ```powershell
 cd back
@@ -18,62 +10,33 @@ Copy-Item .env.example .env
 npm install
 ```
 
-Open `.env` and set real values for:
+Set `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`, `SECRET_KEY` and `COHERE_API_KEY` in `.env`. Never commit that file.
 
-```dotenv
-PORT=5009
-NEO4J_URI=bolt://localhost:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=replace_me
-SECRET_KEY=replace_with_a_long_random_secret
-COHERE_API_KEY=replace_me
-```
-
-Generate a strong authentication secret in PowerShell:
+Generate a secure authentication secret:
 
 ```powershell
 node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ```
 
-Copy that output into `SECRET_KEY`. Never commit `.env`.
-
-## Start
+## Start and verify
 
 ```powershell
 cd back
 npm start
 ```
 
-The API listens on `http://localhost:5009` unless `PORT` specifies another port. Keep this terminal running while using the frontend.
-
-Start the frontend in a second terminal:
+The API listens on `http://localhost:5009` by default. Check it with:
 
 ```powershell
-cd sledss2
-npm run dev
+Invoke-RestMethod http://localhost:5009/api/health
 ```
 
-## Verify
+Run the automated backend tests with `npm test`.
 
-Run automated tests:
+## Current source layout
 
-```powershell
-cd back
-npm test
-```
-
-Check that the sensor API is reachable:
-
-```powershell
-Invoke-RestMethod http://localhost:5009/api/sensors/catalog
-```
-
-## Production files
-
-- `server.js` — application entry point and existing assessment endpoints
+- `server.js` — focused API entry point and health check
 - `auth.js` / `auth-utils.js` — registration, login and session validation
-- `sensor-routes.js` — sensor ingestion and insight endpoints
-- `wellness-engine.js` — reading validation and combined advice logic
-- `*.test.js` — local automated checks
-- `.env.example` — safe configuration template
-- `package.json` / `package-lock.json` — scripts and pinned dependencies
+- `advice-routes.js` — validated Cohere guidance
+- `sensor-routes.js` / `wellness-engine.js` — sensor ingestion and interpretation
+- `*.test.js` — automated checks
