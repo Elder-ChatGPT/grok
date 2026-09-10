@@ -1,0 +1,408 @@
+.games-corner {
+  margin-top: 28px;
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid #d8dfd7;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 92% 4%, rgba(244, 193, 121, .22), transparent 25%),
+    linear-gradient(145deg, #fbfaf5, #eef4ed);
+  box-shadow: 0 12px 36px rgba(27, 57, 48, .06);
+}
+
+.games-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.games-heading h2 {
+  margin: 5px 0 7px;
+  font: 750 clamp(27px, 3vw, 36px) Manrope;
+  letter-spacing: -.035em;
+}
+
+.games-heading p {
+  max-width: 680px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.game-progress-badge {
+  min-width: 105px;
+  padding: 13px 15px;
+  border-radius: 17px;
+  background: #fff7df;
+  border: 1px solid #ead59b;
+  text-align: center;
+}
+
+.game-progress-badge span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #8b651d;
+  font: 800 24px Manrope;
+}
+
+.game-progress-badge svg { width: 22px; fill: #efbd4e; color: #b98624; }
+.game-progress-badge small { color: #806d47; font-size: 12px; }
+
+.daily-play {
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  align-items: center;
+  gap: 13px;
+  margin: 24px 0 18px;
+  padding: 15px 17px;
+  border-radius: 15px;
+  background: #174b3f;
+  color: white;
+}
+
+.daily-play > svg {
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.12);
+  color: #ffd99b;
+}
+
+.daily-play div { display: flex; flex-direction: column; }
+.daily-play strong { font: 700 16px Manrope; }
+.daily-play div span { margin-top: 2px; color: #d6e5df; font-size: 14px; }
+.daily-play > span { padding: 7px 10px; border-radius: 20px; background: rgba(255,255,255,.1); font-size: 13px; white-space: nowrap; }
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.game-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #d6dfd8;
+  border-radius: 18px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.game-icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+}
+
+.game-icon svg { width: 26px; height: 26px; }
+.game-peach { color: #a44f38; background: #fae5dc; }
+.game-green { color: #3b754b; background: #e2efdf; }
+.game-blue { color: #376c87; background: #e0edf3; }
+.game-skill { margin-top: 14px; color: #77877f; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.game-card h3 { margin: 5px 0 6px; font: 750 20px Manrope; }
+.game-card p { min-height: 70px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+
+.played-before {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  color: #4d7a58;
+  font-size: 13px;
+}
+
+.played-before svg { width: 16px; }
+
+.game-card > button {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.games-boundary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 0;
+  color: #687a73;
+  font-size: 13px;
+}
+
+.games-boundary > span {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #aebcb5;
+  border-radius: 50%;
+}
+
+.game-stage {
+  width: min(760px, 100%);
+  min-height: 530px;
+  margin: auto;
+  padding: clamp(4px, 2vw, 16px);
+}
+
+.game-play-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.game-play-header h3 {
+  margin: 3px 0 0;
+  font: 750 clamp(25px, 3vw, 32px) Manrope;
+}
+
+.game-back, .game-listen, .game-secondary {
+  min-height: 46px;
+  border: 1px solid #aebdb5;
+  border-radius: 11px;
+  background: white;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 13px;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.game-back svg, .game-listen svg { width: 18px; }
+
+.game-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 54px;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border-radius: 13px;
+  background: #e6eee7;
+  color: var(--green);
+}
+
+.game-status strong { font-size: 17px; }
+.game-status span { color: #61746c; font-size: 14px; }
+
+.pair-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+}
+
+.pair-card {
+  aspect-ratio: 1;
+  min-height: 112px;
+  border: 2px solid #c3d0c8;
+  border-radius: 17px;
+  background: linear-gradient(145deg, #1d5749, #123d34);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 7px 16px rgba(23,75,63,.13);
+}
+
+.pair-card > span { font: 800 36px Manrope; }
+.pair-card.visible { background: white; color: var(--ink); border-color: #e6b66a; transform: translateY(-2px); }
+.pair-card.visible > span { font-size: 40px; }
+.pair-card small { margin-top: 4px; color: var(--muted); font-size: 13px; text-transform: capitalize; }
+
+.game-ready, .game-celebration {
+  min-height: 340px;
+  padding: 36px 20px;
+  border-radius: 20px;
+  background: white;
+  border: 1px solid #d7e0d9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.game-ready > span { font-size: 50px; letter-spacing: 10px; }
+.game-ready h4, .game-celebration h3 { margin: 16px 0 7px; font: 750 25px Manrope; }
+.game-ready p, .game-celebration p { max-width: 530px; margin: 0 0 20px; color: var(--muted); font-size: 16px; line-height: 1.6; }
+
+.garden-sequence {
+  min-height: 300px;
+  padding: 28px;
+  border: 2px solid #bdd1c1;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #f7fbf4, #e5f0e1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.garden-sequence > div { position: relative; }
+.garden-sequence span {
+  width: 100px;
+  height: 100px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: white;
+  border: 1px solid #cad9cc;
+  font-size: 49px;
+  box-shadow: 0 7px 20px rgba(34,77,59,.08);
+}
+
+.garden-sequence small {
+  position: absolute;
+  right: -5px;
+  top: -7px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--green);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.chosen-slots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 17px;
+}
+
+.chosen-slots span {
+  width: 58px;
+  height: 58px;
+  border: 2px dashed #afbeb6;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: white;
+  color: #809089;
+  font-size: 25px;
+}
+
+.garden-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+}
+
+.peek-again {
+  min-height: 44px;
+  margin: 0 auto 14px;
+  padding: 9px 13px;
+  border: 1px solid #aec0b5;
+  border-radius: 10px;
+  background: white;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.peek-again svg { width: 17px; }
+
+.garden-options button {
+  min-height: 104px;
+  border: 1px solid #c6d3cb;
+  border-radius: 15px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.garden-options button span { font-size: 38px; }
+.garden-options button small { margin-top: 3px; font-size: 14px; text-transform: capitalize; }
+.game-message { margin: 15px 0 0; padding: 13px 15px; border-radius: 11px; background: #fff0e9; color: #8b4d3b; font-size: 15px; text-align: center; }
+.game-message.success { background: #e4f0e5; color: #3c704a; }
+.game-next { margin: 14px auto 0; }
+
+.number-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.number-board button {
+  min-height: 92px;
+  border: 2px solid #bfd0c5;
+  border-radius: 17px;
+  background: white;
+  color: var(--green);
+  font: 800 30px Manrope;
+}
+
+.number-board button.found {
+  background: #e2eee3;
+  border-color: #9bb8a2;
+  color: #4f865d;
+}
+
+.number-board button svg { width: 29px; height: 29px; }
+.celebration-sun { width: 82px; height: 82px; border-radius: 50%; background: #fff0bd; color: #b77d19; display: grid; place-items: center; box-shadow: 0 0 0 10px #fff8e2; }
+.celebration-sun svg { width: 38px; height: 38px; fill: #efbd4e; }
+.game-celebration > div:last-child { display: flex; gap: 10px; }
+
+.game-card > button:hover, .start-test-button:hover { background: #236151; }
+.pair-card:focus-visible, .garden-options button:focus-visible, .number-board button:focus-visible, .game-card > button:focus-visible { outline: 4px solid #f0ad78; outline-offset: 3px; }
+
+@media(max-width:900px) {
+  .games-grid { grid-template-columns: 1fr; }
+  .game-card p { min-height: 0; }
+  .game-play-header { grid-template-columns: 1fr 1fr; }
+  .game-play-header > div { grid-column: 1 / -1; grid-row: 1; }
+  .game-back { grid-column: 1; grid-row: 2; }
+  .game-listen { grid-column: 2; grid-row: 2; }
+}
+
+@media(max-width:600px) {
+  .games-corner { padding: 20px 14px; }
+  .games-heading { align-items: flex-start; }
+  .games-heading p { font-size: 16px; }
+  .daily-play { grid-template-columns: 42px 1fr; }
+  .daily-play > span { grid-column: 2; justify-self: start; }
+  .pair-board { grid-template-columns: repeat(2, 1fr); }
+  .pair-card { min-height: 105px; }
+  .number-board { grid-template-columns: repeat(3, 1fr); }
+  .number-board button { min-height: 78px; }
+  .garden-sequence { gap: 7px; padding: 18px 8px; overflow-x: auto; justify-content: flex-start; }
+  .garden-sequence span { width: 72px; height: 82px; font-size: 39px; }
+  .garden-options { grid-template-columns: repeat(2, 1fr); }
+  .game-celebration > div:last-child { flex-direction: column; width: 100%; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  .pair-card { transition: none; }
+}

@@ -1,7 +1,7 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity, ArrowRight, BatteryMedium, Bell, Brain, CalendarDays,
-  Check, ChevronRight, CircleHelp, Clock3, Footprints, HeartPulse, Home,
+  Check, ChevronRight, CircleHelp, Clock3, Footprints, Gamepad2, HeartPulse, Home,
   LogOut, Menu, MoonStar, MoreHorizontal, PlugZap, Salad, Settings, ShieldCheck,
   Sparkles, Stethoscope, SunMedium, UserRound, Users, Watch, Wifi, X
 } from "lucide-react";
@@ -11,6 +11,7 @@ import { buildWellnessProfile, domains, trendData } from "./data/healthModel";
 import AuthScreen from "./components/AuthScreen";
 import AssessmentStudio from "./components/AssessmentStudio";
 import CombinedGuidance from "./components/CombinedGuidance";
+import GamesCorner from "./components/GamesCorner";
 import { assessmentCatalog } from "./data/assessments";
 import { clearSession, getMe, saveSession, savedSession } from "./api/auth";
 
@@ -23,7 +24,7 @@ function Brand() {
 function Header({ onMenu, user, onLogout, onNotify }) {
   const [accountOpen,setAccountOpen]=useState(false); const [noticesOpen,setNoticesOpen]=useState(false);
   return <header className="topbar"><button className="icon-button mobile-only" onClick={onMenu} aria-label="Open menu"><Menu /></button><Brand />
-    <nav className="topnav"><a href="#overview">Overview</a><a href="#insights">Insights</a><a href="#assessments">Assessments</a><a href="#devices">Devices</a></nav>
+    <nav className="topnav"><a href="#overview">Overview</a><a href="#insights">Insights</a><a href="#assessments">Assessments</a><a href="#games">Games</a><a href="#devices">Devices</a></nav>
     <div className="header-actions"><div className="menu-anchor"><button className="icon-button" aria-label="Notifications" aria-expanded={noticesOpen} onClick={()=>{setNoticesOpen(!noticesOpen);setAccountOpen(false)}}><Bell size={20}/><i /></button>{noticesOpen&&<div className="header-popover notification-popover"><span className="eyebrow">NOTIFICATIONS</span><strong>Youâ€™re all caught up</strong><p>Weâ€™ll let you know when a check or sensor needs attention.</p></div>}</div><div className="menu-anchor"><button className="avatar" onClick={()=>{setAccountOpen(!accountOpen);setNoticesOpen(false)}} aria-label="Open account menu" aria-expanded={accountOpen}>{initials(user)}</button>{accountOpen&&<div className="header-popover account-popover"><div><span className="avatar small">{initials(user)}</span><p><strong>{user?.firstName || "Angela"}</strong><small>{user?.email}</small></p></div><button onClick={()=>{setAccountOpen(false);onNotify("Profile preferences will be available in the next release.")}}><UserRound/>Profile & preferences</button><button onClick={onLogout}><LogOut/>Sign out</button></div>}</div></div>
   </header>;
 }
@@ -32,7 +33,7 @@ const initials = user => (user?.firstName || "Angela").split(/\s+/).map(v=>v[0])
 function Sidebar({ open, setOpen, active, setActive, user, onNotify }) {
   const items = [
     ["overview", Home, "Today"], ["insights", Sparkles, "My insights"],
-    ["assessments", Stethoscope, "Health checks"], ["devices", Watch, "My sensors"]
+    ["assessments", Stethoscope, "Health checks"], ["games", Gamepad2, "Games corner"], ["devices", Watch, "My sensors"]
   ];
   return <><aside className={`sidebar ${open ? "open" : ""}`}>
     <button className="close-menu mobile-only" onClick={() => setOpen(false)}><X/></button>
@@ -121,6 +122,7 @@ function App() {
       <div className="two-column"><InsightCard profile={profile} onNotify={notify}/><TrendChart/></div>
       <section id="assessments" className="assessments-section"><div className="section-title"><div><span className="eyebrow">VALIDATED HEALTH CHECKS</span><h2>Measure what matters today</h2><p>Published screening methods, explained in plain language and scored transparently.</p></div><span className="assessment-count">{Object.keys(assessmentResults).length} of {assessmentCatalog.length} complete</span></div><div className="assessment-grid validated-grid">{assessmentCatalog.map(item=><AssessmentCard key={item.id} item={{...item,state:assessmentResults[item.id]?"Complete":item.state}} onStart={()=>setAssessmentOpen(item)}/>)}</div></section>
       <CombinedGuidance results={assessmentResults} token={session.token} onOpen={()=>setAssessmentOpen(assessmentCatalog[0])}/>
+      <GamesCorner/>
       <SensorHub sensors={sensors} onToggle={toggleSensor}/>
       <section className="care-strip"><div className="care-icon"><SunMedium/></div><div><strong>Designed for daily wellbeing, connected to real care.</strong><span>Share a plain-language summary with a trusted family member or health professional when you choose.</span></div><button className="outline-button" onClick={()=>notify("Your health summary is being prepared.")}>Create health summary</button></section>
       <footer><Brand/><p>Wellness guidance that respects the whole person.</p><span>Â© 2026 SLEDSS Â· Privacy Â· Clinical safety Â· Accessibility</span></footer>
@@ -128,5 +130,4 @@ function App() {
 }
 
 export default App;
-
 

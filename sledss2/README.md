@@ -35,6 +35,7 @@ Vite writes the production files to `build`.
 
 - `src/App.jsx` — dashboard and application shell
 - `src/components/` — authentication, assessments and combined guidance
+- `src/components/GamesCorner.jsx` — accessible recreational games and local play progress
 - `src/data/` — calibrated assessments and wellness model
 - `src/api/` — authentication and Cohere advice clients
 - `src/assets/` — current inclusive hero image
