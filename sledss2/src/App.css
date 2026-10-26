@@ -23,7 +23,7 @@ section[id]{scroll-margin-top:96px}
 
 /* Shared brand artwork */
 .brand{min-width:250px}
-.kin-keepers-logo{--logo-size:48px;width:var(--logo-size);height:var(--logo-size);flex:0 0 var(--logo-size);display:block;border-radius:50%;overflow:hidden;background:#24577e url('/logo-circle.svg') center/cover no-repeat;box-shadow:0 0 0 2px rgba(255,255,255,.75),0 3px 10px rgba(20,55,72,.16)}
+.kin-keepers-logo{--logo-size:48px;width:var(--logo-size);height:var(--logo-size);flex:0 0 var(--logo-size);display:block;border-radius:50%;object-fit:cover;background:#24577e;box-shadow:0 0 0 2px rgba(255,255,255,.75),0 3px 10px rgba(20,55,72,.16)}
 .brand-mark{--logo-size:48px;transform:none}
 .auth-brand-logo{--logo-size:58px}
 .auth-mobile-brand .kin-keepers-logo{--logo-size:46px}
