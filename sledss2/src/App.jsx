@@ -18,7 +18,7 @@ import { clearSession, getMe, saveSession, savedSession } from "./api/auth";
 const iconMap = { activity: Footprints, sleep: MoonStar, stress: Brain, nutrition: Salad, social: Users, heart: HeartPulse };
 
 function Brand() {
-  return <div className="brand"><img className="brand-mark" src="/logo.ico" alt="" aria-hidden="true" /><div><strong>SLEDSS</strong><span>Live well. Age boldly.</span></div></div>;
+  return <div className="brand"><span className="kin-keepers-logo brand-mark" aria-hidden="true" /><div><strong>SLEDSS</strong><span>Live well. Age boldly.</span></div></div>;
 }
 
 function Header({ onMenu, user, onLogout, onNotify }) {

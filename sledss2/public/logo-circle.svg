@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">Kin-Keepers circular logo</title>
+  <circle cx="128" cy="128" r="124" fill="#24577e"/>
+  <circle cx="128" cy="128" r="119" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="2"/>
+  <g fill="none" stroke="#12d59a" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+    <path d="M128 194V62"/>
+    <path d="M108 194v-72L76 92"/>
+    <path d="M148 194v-72l32-30"/>
+    <path d="M88 177v-39l-35-29"/>
+    <path d="M168 177v-39l35-29"/>
+    <path d="M108 126V88L91 72"/>
+    <path d="M148 126V88l17-16"/>
+    <path d="M128 104l-22-23"/>
+    <path d="M128 104l22-23"/>
+  </g>
+  <g fill="#12d59a">
+    <circle cx="128" cy="55" r="9"/>
+    <circle cx="91" cy="72" r="9"/>
+    <circle cx="165" cy="72" r="9"/>
+    <circle cx="76" cy="92" r="9"/>
+    <circle cx="180" cy="92" r="9"/>
+    <circle cx="53" cy="109" r="9"/>
+    <circle cx="203" cy="109" r="9"/>
+    <circle cx="106" cy="81" r="7"/>
+    <circle cx="150" cy="81" r="7"/>
+  </g>
+</svg>
