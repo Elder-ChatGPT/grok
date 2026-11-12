@@ -14,6 +14,7 @@ import CombinedGuidance from "./components/CombinedGuidance";
 import GamesCorner from "./components/GamesCorner";
 import { assessmentCatalog } from "./data/assessments";
 import { clearSession, getMe, saveSession, savedSession } from "./api/auth";
+import { familyCircleResult, publishFamilyCircleResult, subscribeToFamilyCircle } from "./api/familyCircle";
 
 const iconMap = { activity: Footprints, sleep: MoonStar, stress: Brain, nutrition: Salad, social: Users, heart: HeartPulse };
 
@@ -21,11 +22,11 @@ function Brand() {
   return <div className="brand"><img className="kin-keepers-logo brand-mark" src="/logo-circle.svg" alt="" aria-hidden="true" /><div><strong>SLEDSS</strong><span>Live well. Age boldly.</span></div></div>;
 }
 
-function Header({ onMenu, user, onLogout, onNotify }) {
+function Header({ onMenu, user, onLogout, onNotify, familyCircleConnected }) {
   const [accountOpen,setAccountOpen]=useState(false); const [noticesOpen,setNoticesOpen]=useState(false);
   return <header className="topbar"><button className="icon-button mobile-only" onClick={onMenu} aria-label="Open menu"><Menu /></button><Brand />
     <nav className="topnav"><a href="#overview">Overview</a><a href="#insights">Insights</a><a href="#assessments">Assessments</a><a href="#games">Games</a><a href="#devices">Devices</a></nav>
-    <div className="header-actions"><div className="menu-anchor"><button className="icon-button" aria-label="Notifications" aria-expanded={noticesOpen} onClick={()=>{setNoticesOpen(!noticesOpen);setAccountOpen(false)}}><Bell size={20}/><i /></button>{noticesOpen&&<div className="header-popover notification-popover"><span className="eyebrow">NOTIFICATIONS</span><strong>Youâ€™re all caught up</strong><p>Weâ€™ll let you know when a check or sensor needs attention.</p></div>}</div><div className="menu-anchor"><button className="avatar" onClick={()=>{setAccountOpen(!accountOpen);setNoticesOpen(false)}} aria-label="Open account menu" aria-expanded={accountOpen}>{initials(user)}</button>{accountOpen&&<div className="header-popover account-popover"><div><span className="avatar small">{initials(user)}</span><p><strong>{user?.firstName || "Angela"}</strong><small>{user?.email}</small></p></div><button onClick={()=>{setAccountOpen(false);onNotify("Profile preferences will be available in the next release.")}}><UserRound/>Profile & preferences</button><button onClick={onLogout}><LogOut/>Sign out</button></div>}</div></div>
+    <div className="header-actions"><div className="menu-anchor"><button className="icon-button" aria-label="Notifications" aria-expanded={noticesOpen} onClick={()=>{setNoticesOpen(!noticesOpen);setAccountOpen(false)}}><Bell size={20}/><i /></button>{noticesOpen&&<div className="header-popover notification-popover"><span className="eyebrow">NOTIFICATIONS</span><strong>Youâ€™re all caught up</strong><p>Weâ€™ll let you know when a check or sensor needs attention.</p></div>}</div><div className="menu-anchor"><button className="avatar" onClick={()=>{setAccountOpen(!accountOpen);setNoticesOpen(false)}} aria-label="Open account menu" aria-expanded={accountOpen}>{initials(user)}</button>{accountOpen&&<div className="header-popover account-popover"><div><span className="avatar small">{initials(user)}</span><p><strong>{user?.firstName || "Angela"}</strong><small>{user?.email}</small></p></div><button onClick={()=>{setAccountOpen(false);onNotify("Profile preferences will be available in the next release.")}}><UserRound/>Profile & preferences</button>{familyCircleConnected?<span className="family-account-note"><ShieldCheck/>Signed in with Family Circle</span>:<button onClick={onLogout}><LogOut/>Sign out</button>}</div>}</div></div>
   </header>;
 }
 
@@ -100,24 +101,44 @@ function CheckInModal({ onClose, onSave }) {
 
 function App() {
   const [session,setSession] = useState(savedSession);
+  const [familyCircleConnected,setFamilyCircleConnected] = useState(false);
+  const familyCircleRef=useRef(false);
   const [checkingSession,setCheckingSession]=useState(Boolean(savedSession()?.token)); const [toast,setToast]=useState("");
   const [menuOpen,setMenuOpen] = useState(false); const [active,setActive] = useState("overview"); const [checkIn,setCheckIn] = useState(null); const [modal,setModal] = useState(false);
   const [assessmentOpen,setAssessmentOpen]=useState(null); const [assessmentResults,setAssessmentResults]=useState(()=>{try{return JSON.parse(localStorage.getItem("sledss_assessments"))||{}}catch{return {}}});
   const [sensors,setSensors] = useState([{id:"watch",name:"SLEDSS Band",connected:true,synced:"8 min ago",battery:74},{id:"scale",name:"Smart body scale",connected:true,synced:"this morning",battery:91},{id:"heart",name:"Clinical sensors",connected:false,battery:0}]);
   const profile = useMemo(()=>buildWellnessProfile(checkIn,sensors),[checkIn,sensors]);
-  useEffect(()=>{ if(session?.token){ getMe(session.token).then(({user})=>setSession(current=>({...current,user}))).catch(()=>{clearSession();setSession(null)}).finally(()=>setCheckingSession(false)) } else setCheckingSession(false) },[]); // Validate restored sessions once.
+  useEffect(()=>{
+    return subscribeToFamilyCircle(window, user => {
+      familyCircleRef.current=true;
+      setFamilyCircleConnected(true);
+      setSession({ familyCircle:true, user:{ firstName:user.name || user.email.split("@")[0], email:user.email } });
+      setCheckingSession(false);
+    });
+  },[]);
+  useEffect(()=>{ if(session?.token){ getMe(session.token).then(({user})=>{if(!familyCircleRef.current)setSession(current=>({...current,user}))}).catch(()=>{if(!familyCircleRef.current){clearSession();setSession(null)}}).finally(()=>setCheckingSession(false)) } else setCheckingSession(false) },[]); // Validate restored sessions once.
   useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(""),3500);return()=>clearTimeout(id)},[toast]);
   const notify=message=>setToast(message);
-  const saveAssessment=(id,result)=>{const next={...assessmentResults,[id]:result};setAssessmentResults(next);localStorage.setItem("sledss_assessments",JSON.stringify(next));notify("Assessment completed and added to your health picture.")};
+  const saveAssessment=(id,result)=>{
+    const next={...assessmentResults,[id]:result};
+    setAssessmentResults(next);
+    localStorage.setItem("sledss_assessments",JSON.stringify(next));
+    const assessment=assessmentCatalog.find(item=>item.id===id);
+    if(familyCircleConnected){
+      publishFamilyCircleResult(window, familyCircleResult(id,assessment?.title || id,result));
+      notify("Assessment completed and saved securely in Family Circle.");
+    } else notify("Assessment completed and added to your health picture.");
+  };
   const saveCheckIn = values => {setCheckIn(values);setModal(false);notify("Todayâ€™s check-in has been added to your health picture.")};
   const toggleSensor = id => {setSensors(sensors.map(s=>s.id===id?{...s,connected:true,synced:"just now",battery:s.battery||100}:s));notify("Sensor connection is ready.")};
   const authenticate = (data,remember) => { saveSession(data,remember); setSession(data); };
-  const logout = () => { clearSession(); setSession(null); };
+  const logout = () => { if(familyCircleConnected)return; clearSession(); setSession(null); };
   const demo = () => setSession({demo:true,user:{firstName:"Angela",email:"demo@sledss.health"}});
   if(checkingSession)return <div className="session-loader"><Brand/><span className="loader-ring"/><p>Preparing your health pictureâ€¦</p></div>;
   if (!session) return <AuthScreen onAuthenticated={authenticate} onDemo={demo}/>;
-  return <div className="app-shell"><Header onMenu={()=>setMenuOpen(true)} user={session.user} onLogout={logout} onNotify={notify}/><Sidebar open={menuOpen} setOpen={setMenuOpen} active={active} setActive={setActive} user={session.user} onNotify={notify}/><main>
+  return <div className="app-shell"><Header onMenu={()=>setMenuOpen(true)} user={session.user} onLogout={logout} onNotify={notify} familyCircleConnected={familyCircleConnected}/><Sidebar open={menuOpen} setOpen={setMenuOpen} active={active} setActive={setActive} user={session.user} onNotify={notify}/><main>
     <div className="content"><Hero profile={profile} onCheckIn={()=>setModal(true)} user={session.user}/>
+      {familyCircleConnected&&<section className="family-circle-connected" role="status"><ShieldCheck size={19}/><div><strong>Connected to Family Circle</strong><span>You are signed in through Family Circle. Completed health checks are saved back to your private Family Circle record.</span></div></section>}
       <section className="signals-section"><div className="section-title"><div><span className="eyebrow">TODAY AT A GLANCE</span><h2>Your health signals</h2></div><button onClick={()=>notify("All available signals are shown below.")}>View all signals <ArrowRight size={16}/></button></div><div className="signals-grid">{domains.map(d=><SignalCard key={d.id} domain={d}/>)}</div></section>
       <div className="two-column"><InsightCard profile={profile} onNotify={notify}/><TrendChart/></div>
       <section id="assessments" className="assessments-section"><div className="section-title"><div><span className="eyebrow">VALIDATED HEALTH CHECKS</span><h2>Measure what matters today</h2><p>Published screening methods, explained in plain language and scored transparently.</p></div><span className="assessment-count">{Object.keys(assessmentResults).length} of {assessmentCatalog.length} complete</span></div><div className="assessment-grid validated-grid">{assessmentCatalog.map(item=><AssessmentCard key={item.id} item={{...item,state:assessmentResults[item.id]?"Complete":item.state}} onStart={()=>setAssessmentOpen(item)}/>)}</div></section>

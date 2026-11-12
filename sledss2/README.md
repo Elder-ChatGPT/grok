@@ -31,6 +31,16 @@ npm run build
 
 Vite writes the production files to `build`.
 
+## Family Circle connection
+
+When SLEDSS runs inside the Family Circle desktop app, the isolated view receives a validated
+`familycircle:identity` event containing the signed-in member's name and email. SLEDSS uses that
+identity for the current view and does not show its own registration or login screen.
+
+After a health check, SLEDSS emits a versioned `familycircle:sledss-result` event. Family Circle
+validates it, stores the full result under the current local account, and exposes only a summary
+to its renderer. The normal browser experience and SLEDSS login remain available outside Family Circle.
+
 ## Current source layout
 
 - `src/App.jsx` — dashboard and application shell
