@@ -14,7 +14,7 @@ import CombinedGuidance from "./components/CombinedGuidance";
 import GamesCorner from "./components/GamesCorner";
 import { assessmentCatalog } from "./data/assessments";
 import { clearSession, getMe, saveSession, savedSession } from "./api/auth";
-import { familyCircleResult, publishFamilyCircleResult, subscribeToFamilyCircle } from "./api/familyCircle";
+import { familyCircleResult, isFamilyCircleLaunch, publishFamilyCircleResult, subscribeToFamilyCircle } from "./api/familyCircle";
 
 const iconMap = { activity: Footprints, sleep: MoonStar, stress: Brain, nutrition: Salad, social: Users, heart: HeartPulse };
 
@@ -100,10 +100,11 @@ function CheckInModal({ onClose, onSave }) {
 }
 
 function App() {
+  const familyCircleLaunch=useMemo(()=>isFamilyCircleLaunch(window.location),[]);
   const [session,setSession] = useState(savedSession);
   const [familyCircleConnected,setFamilyCircleConnected] = useState(false);
   const familyCircleRef=useRef(false);
-  const [checkingSession,setCheckingSession]=useState(Boolean(savedSession()?.token)); const [toast,setToast]=useState("");
+  const [checkingSession,setCheckingSession]=useState(Boolean(savedSession()?.token)||familyCircleLaunch); const [toast,setToast]=useState("");
   const [menuOpen,setMenuOpen] = useState(false); const [active,setActive] = useState("overview"); const [checkIn,setCheckIn] = useState(null); const [modal,setModal] = useState(false);
   const [assessmentOpen,setAssessmentOpen]=useState(null); const [assessmentResults,setAssessmentResults]=useState(()=>{try{return JSON.parse(localStorage.getItem("sledss_assessments"))||{}}catch{return {}}});
   const [sensors,setSensors] = useState([{id:"watch",name:"SLEDSS Band",connected:true,synced:"8 min ago",battery:74},{id:"scale",name:"Smart body scale",connected:true,synced:"this morning",battery:91},{id:"heart",name:"Clinical sensors",connected:false,battery:0}]);
@@ -116,7 +117,7 @@ function App() {
       setCheckingSession(false);
     });
   },[]);
-  useEffect(()=>{ if(session?.token){ getMe(session.token).then(({user})=>{if(!familyCircleRef.current)setSession(current=>({...current,user}))}).catch(()=>{if(!familyCircleRef.current){clearSession();setSession(null)}}).finally(()=>setCheckingSession(false)) } else setCheckingSession(false) },[]); // Validate restored sessions once.
+  useEffect(()=>{ if(session?.token){ getMe(session.token).then(({user})=>{if(!familyCircleRef.current)setSession(current=>({...current,user}))}).catch(()=>{if(!familyCircleRef.current){clearSession();setSession(null)}}).finally(()=>{if(!familyCircleLaunch||familyCircleRef.current)setCheckingSession(false)}) } else if(!familyCircleLaunch)setCheckingSession(false) },[]); // Validate restored sessions once.
   useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(""),3500);return()=>clearTimeout(id)},[toast]);
   const notify=message=>setToast(message);
   const saveAssessment=(id,result)=>{
@@ -134,7 +135,7 @@ function App() {
   const authenticate = (data,remember) => { saveSession(data,remember); setSession(data); };
   const logout = () => { if(familyCircleConnected)return; clearSession(); setSession(null); };
   const demo = () => setSession({demo:true,user:{firstName:"Angela",email:"demo@sledss.health"}});
-  if(checkingSession)return <div className="session-loader"><Brand/><span className="loader-ring"/><p>Preparing your health pictureâ€¦</p></div>;
+  if(checkingSession)return <div className="session-loader"><Brand/><span className="loader-ring"/><p>{familyCircleLaunch?"Connecting securely to Family Circleâ€¦":"Preparing your health pictureâ€¦"}</p></div>;
   if (!session) return <AuthScreen onAuthenticated={authenticate} onDemo={demo}/>;
   return <div className="app-shell"><Header onMenu={()=>setMenuOpen(true)} user={session.user} onLogout={logout} onNotify={notify} familyCircleConnected={familyCircleConnected}/><Sidebar open={menuOpen} setOpen={setMenuOpen} active={active} setActive={setActive} user={session.user} onNotify={notify}/><main>
     <div className="content"><Hero profile={profile} onCheckIn={()=>setModal(true)} user={session.user}/>

@@ -1,5 +1,10 @@
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+export function isFamilyCircleLaunch(location = globalThis.location) {
+  try { return new URLSearchParams(location?.search || "").get("family_circle") === "1"; }
+  catch { return false; }
+}
+
 export function familyCircleIdentity(value) {
   if (!value || typeof value !== "object") return null;
   const email = String(value.email || "").trim().toLowerCase();

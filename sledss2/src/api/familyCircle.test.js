@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { familyCircleIdentity, familyCircleResult } from "./familyCircle.js";
+import { familyCircleIdentity, familyCircleResult, isFamilyCircleLaunch } from "./familyCircle.js";
+
+test("recognizes only the explicit Family Circle launch marker", () => {
+  assert.equal(isFamilyCircleLaunch({ search: "?family_circle=1" }), true);
+  assert.equal(isFamilyCircleLaunch({ search: "?family_circle=0" }), false);
+  assert.equal(isFamilyCircleLaunch({ search: "" }), false);
+});
 
 test("accepts a bounded Family Circle identity and normalizes its email", () => {
   assert.deepEqual(familyCircleIdentity({ email: " Ada@Example.Test ", name: "Ada" }), { email: "ada@example.test", name: "Ada" });
